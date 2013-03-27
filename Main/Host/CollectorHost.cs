@@ -7,5 +7,12 @@ namespace Host
 {
     public class CollectorHost
     {
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public CollectorHost()
+        {
+ 
+        }
     }
 }
