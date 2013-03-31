@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUI", "Main\GUI.csproj", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Host", "Host\Host.csproj", "{518A0A16-F2AC-4ABC-B991-BAF5F8D81EA0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBConnection", "DBConnection\DBConnection.csproj", "{E8C93498-9523-4768-815C-636A40BA0D1F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,16 +17,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{EBEE4771-998F-4A9B-BD26-B60578AE462D}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{EBEE4771-998F-4A9B-BD26-B60578AE462D}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{EBEE4771-998F-4A9B-BD26-B60578AE462D}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{EBEE4771-998F-4A9B-BD26-B60578AE462D}.Debug|x86.ActiveCfg = Debug|x86
-		{EBEE4771-998F-4A9B-BD26-B60578AE462D}.Debug|x86.Build.0 = Debug|x86
-		{EBEE4771-998F-4A9B-BD26-B60578AE462D}.Release|Any CPU.ActiveCfg = Release|x86
-		{EBEE4771-998F-4A9B-BD26-B60578AE462D}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{EBEE4771-998F-4A9B-BD26-B60578AE462D}.Release|Mixed Platforms.Build.0 = Release|x86
-		{EBEE4771-998F-4A9B-BD26-B60578AE462D}.Release|x86.ActiveCfg = Release|x86
-		{EBEE4771-998F-4A9B-BD26-B60578AE462D}.Release|x86.Build.0 = Release|x86
 		{518A0A16-F2AC-4ABC-B991-BAF5F8D81EA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{518A0A16-F2AC-4ABC-B991-BAF5F8D81EA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{518A0A16-F2AC-4ABC-B991-BAF5F8D81EA0}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -35,6 +27,32 @@ Global
 		{518A0A16-F2AC-4ABC-B991-BAF5F8D81EA0}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{518A0A16-F2AC-4ABC-B991-BAF5F8D81EA0}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{518A0A16-F2AC-4ABC-B991-BAF5F8D81EA0}.Release|x86.ActiveCfg = Release|Any CPU
+		{E8C93498-9523-4768-815C-636A40BA0D1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8C93498-9523-4768-815C-636A40BA0D1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8C93498-9523-4768-815C-636A40BA0D1F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{E8C93498-9523-4768-815C-636A40BA0D1F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{E8C93498-9523-4768-815C-636A40BA0D1F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E8C93498-9523-4768-815C-636A40BA0D1F}.Debug|x86.Build.0 = Debug|Any CPU
+		{E8C93498-9523-4768-815C-636A40BA0D1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8C93498-9523-4768-815C-636A40BA0D1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8C93498-9523-4768-815C-636A40BA0D1F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{E8C93498-9523-4768-815C-636A40BA0D1F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{E8C93498-9523-4768-815C-636A40BA0D1F}.Release|x86.ActiveCfg = Release|Any CPU
+		{E8C93498-9523-4768-815C-636A40BA0D1F}.Release|x86.Build.0 = Release|Any CPU
+		{EBEE4771-998F-4A9B-BD26-B60578AE462D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBEE4771-998F-4A9B-BD26-B60578AE462D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBEE4771-998F-4A9B-BD26-B60578AE462D}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{EBEE4771-998F-4A9B-BD26-B60578AE462D}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{EBEE4771-998F-4A9B-BD26-B60578AE462D}.Debug|x86.ActiveCfg = Debug|x86
+		{EBEE4771-998F-4A9B-BD26-B60578AE462D}.Debug|x86.Build.0 = Debug|x86
+		{EBEE4771-998F-4A9B-BD26-B60578AE462D}.Release|Any CPU.ActiveCfg = Release|x86
+		{EBEE4771-998F-4A9B-BD26-B60578AE462D}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{EBEE4771-998F-4A9B-BD26-B60578AE462D}.Release|Mixed Platforms.Build.0 = Release|x86
+		{EBEE4771-998F-4A9B-BD26-B60578AE462D}.Release|x86.ActiveCfg = Release|x86
+		{EBEE4771-998F-4A9B-BD26-B60578AE462D}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Main\GUI.csproj
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
