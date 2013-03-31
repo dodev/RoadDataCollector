@@ -17,16 +17,19 @@ namespace GUI
         {
             InitializeComponent();
 			host = new CollectorHost (true); // zaglushka host-a
+			// событие которое оповещает о наличие информация для 
+			// запис в текстовое поле вывода
 			host.OutputPending += HandleOutputPending; 
         }
 
         void HandleOutputPending (string displayMe)
         {
-			//if (this.InvokeRequired) {
+			// т.к. мы вызываем этот метод из другого потака
+			// мы должны убедится что рабтаем в GUI потока
 				this.Invoke ((MethodInvoker)delegate () {
 					this.AddLog (displayMe);
 				});
-			//}
+
         }
         //textbox numerals only
         private void NumeralsOnly(object sender, KeyPressEventArgs e)
@@ -52,7 +55,7 @@ namespace GUI
                 tabControl.TabPages.Remove(tabControl.TabPages[2]);
                 tabPageBuffer.Add(tabControl.TabPages[1]);
                 tabControl.TabPages.Remove(tabControl.TabPages[1]);
-				// GO! GO! GO!
+				// GO! GO! GO! запускаме работа хоста
 				host.Start ();
             }
             else
@@ -66,8 +69,9 @@ namespace GUI
                 tabControl.TabPages.Add(tabPageBuffer[0]);
                 tabPageBuffer.Clear();
 
-				// and stop
-				host.Stop ();
+				// устанавливаем хост
+				host.Stop (); 
+				// TODO: Установит host при закрываением окна
             }
         }
         #region Publics

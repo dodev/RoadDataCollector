@@ -54,9 +54,6 @@
   </Target>
   -->
   <ItemGroup>
-    <Folder Include="DBConnection\" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\DBConnection\DBConnection.csproj">
       <Project>{E8C93498-9523-4768-815C-636A40BA0D1F}</Project>
       <Name>DBConnection</Name>

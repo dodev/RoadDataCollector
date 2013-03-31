@@ -27,6 +27,10 @@ namespace Host
 
         }
 
+
+		//
+		// примерная реализация таймера
+		//
 		#region Zaglushka
 
 		const int QCAPACITY = 20;
