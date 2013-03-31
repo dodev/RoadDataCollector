@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
+
+using Host;
 
 namespace GUI
 {
@@ -13,10 +10,23 @@ namespace GUI
     {
         //objects
         List<TabPage> tabPageBuffer = new List<TabPage>(2);     //to make tabPages invisible
+		CollectorHost host = null; // the host
+
         //Form initialize
         public Form1()
         {
             InitializeComponent();
+			host = new CollectorHost (true); // zaglushka host-a
+			host.OutputPending += HandleOutputPending; 
+        }
+
+        void HandleOutputPending (string displayMe)
+        {
+			//if (this.InvokeRequired) {
+				this.Invoke ((MethodInvoker)delegate () {
+					this.AddLog (displayMe);
+				});
+			//}
         }
         //textbox numerals only
         private void NumeralsOnly(object sender, KeyPressEventArgs e)
@@ -42,6 +52,8 @@ namespace GUI
                 tabControl.TabPages.Remove(tabControl.TabPages[2]);
                 tabPageBuffer.Add(tabControl.TabPages[1]);
                 tabControl.TabPages.Remove(tabControl.TabPages[1]);
+				// GO! GO! GO!
+				host.Start ();
             }
             else
             {   //ending process
@@ -53,6 +65,9 @@ namespace GUI
                 tabControl.TabPages.Add(tabPageBuffer[1]);
                 tabControl.TabPages.Add(tabPageBuffer[0]);
                 tabPageBuffer.Clear();
+
+				// and stop
+				host.Stop ();
             }
         }
         #region Publics
@@ -108,6 +123,10 @@ namespace GUI
                 logTextBox.Text = "";
             else
                 logTextBox.Text += "\n" + log;
+
+			// scroll to bottom
+			logTextBox.SelectionStart = logTextBox.Text.Length;
+			logTextBox.ScrollToCaret ();
         }
         //progressBarValue
         /// <summary>
