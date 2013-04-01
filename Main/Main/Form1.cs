@@ -124,9 +124,9 @@ namespace GUI
         public void AddLog(string log, bool clear = false)
         {
             if (clear)
-                logTextBox.Text = "";
-            else
-                logTextBox.Text += "\n" + log;
+				logTextBox.Text = "";
+			else
+				logTextBox.AppendText (log + Environment.NewLine);
 
 			// scroll to bottom
 			logTextBox.SelectionStart = logTextBox.Text.Length;

@@ -50,7 +50,7 @@ namespace Host
 			outputQueue = new Queue<string> (QCAPACITY);
 			outputThread = new Thread (new ThreadStart (WriteToGUIConsole));
 			timer = new DummyTimer (1000);
-			timerSignal = new AutoResetEvent (false);
+			timerSignal = new ManualResetEvent (false);
 
 		}
 
@@ -142,7 +142,8 @@ namespace Host
 		{
 			timer.Stop ();
 			devicesThread.Abort ();
-			devicesThread.Join (); 
+			devicesThread.Join ();
+			// TODO: re-init threads
 		}
 
 		#region IDisposable implementation
