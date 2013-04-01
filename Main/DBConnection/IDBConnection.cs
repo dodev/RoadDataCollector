@@ -11,6 +11,7 @@ namespace DBConnection
 		void Connect (string serverUrl, string database, string user, string password);
 		void Disconnect ();
 		bool ExecuteQuery (IQuery query);
+		string GetLastResponse ();
 	}
 }
 

@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+
+using DBConnection;
 
 namespace Host
 {
     interface IDevice
     {
+		IStorageAdapter Adapter {get;}
         void Init();
         string GetName();
         object GetData();
