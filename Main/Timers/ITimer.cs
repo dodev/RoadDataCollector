@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 
-namespace Host
+namespace Timers
 {
 	/// <summary>
 	/// Таймер включает EventWaitHandle в состояние Signaled на определеном интервале 

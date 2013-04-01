@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Host", "Host\Host.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DBConnection", "DBConnection\DBConnection.csproj", "{E8C93498-9523-4768-815C-636A40BA0D1F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Timers", "Timers\Timers.csproj", "{EBCB7BCD-C7F3-4802-9AFD-7B6C5F008634}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,18 @@ Global
 		{E8C93498-9523-4768-815C-636A40BA0D1F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{E8C93498-9523-4768-815C-636A40BA0D1F}.Release|x86.ActiveCfg = Release|Any CPU
 		{E8C93498-9523-4768-815C-636A40BA0D1F}.Release|x86.Build.0 = Release|Any CPU
+		{EBCB7BCD-C7F3-4802-9AFD-7B6C5F008634}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBCB7BCD-C7F3-4802-9AFD-7B6C5F008634}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBCB7BCD-C7F3-4802-9AFD-7B6C5F008634}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{EBCB7BCD-C7F3-4802-9AFD-7B6C5F008634}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{EBCB7BCD-C7F3-4802-9AFD-7B6C5F008634}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EBCB7BCD-C7F3-4802-9AFD-7B6C5F008634}.Debug|x86.Build.0 = Debug|Any CPU
+		{EBCB7BCD-C7F3-4802-9AFD-7B6C5F008634}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBCB7BCD-C7F3-4802-9AFD-7B6C5F008634}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBCB7BCD-C7F3-4802-9AFD-7B6C5F008634}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{EBCB7BCD-C7F3-4802-9AFD-7B6C5F008634}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{EBCB7BCD-C7F3-4802-9AFD-7B6C5F008634}.Release|x86.ActiveCfg = Release|Any CPU
+		{EBCB7BCD-C7F3-4802-9AFD-7B6C5F008634}.Release|x86.Build.0 = Release|Any CPU
 		{EBEE4771-998F-4A9B-BD26-B60578AE462D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EBEE4771-998F-4A9B-BD26-B60578AE462D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EBEE4771-998F-4A9B-BD26-B60578AE462D}.Debug|Mixed Platforms.ActiveCfg = Debug|x86

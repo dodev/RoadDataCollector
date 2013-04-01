@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 
 using DBConnection;
+using Timers;
 
 namespace Host
 {
@@ -50,7 +51,7 @@ namespace Host
 			devicesThread = new Thread (new ThreadStart (CollectDeviceInfo));
 			//outputQueue = new Queue<string> (QCAPACITY);
 			//outputThread = new Thread (new ThreadStart (WriteToGUIConsole));
-			timer = new DummyTimer (1000);
+			timer = new TimeIntervalTimer (1000);
 			timerSignal = new ManualResetEvent (false);
 			queriesReadySignal = new ManualResetEvent (false);
 
@@ -156,48 +157,6 @@ namespace Host
 		void OnOutputPending (string msg) {
 			if (OutputPending != null)
 				OutputPending (msg);
-		}
-
-		class DummyTimer : ITimer
-		{
-			EventWaitHandle eventHandle;
-			Timer timer;
-			int interval;
-
-			public DummyTimer (int milliseconds)
-			{
-				eventHandle = null;
-				timer = null;
-				interval = milliseconds;
-			}
-			#region ITimer implementation
-
-			public void Init (EventWaitHandle waitHandle)
-			{
-				if (eventHandle == null && waitHandle != null) {
-					eventHandle = waitHandle;
-					eventHandle.Reset (); // make sure the handle is not signaled
-
-				}
-			}
-
-			void setEvent (object state)
-			{
-				eventHandle.Set ();
-			}
-
-			public void Start ()
-			{
-				if (eventHandle != null)
-					timer = new Timer (new TimerCallback (setEvent), null, 0, interval);
-			}
-
-			public void Stop ()
-			{
-				timer.Dispose ();
-			}
-
-			#endregion
 		}
 
 		#endregion Zaglushka
