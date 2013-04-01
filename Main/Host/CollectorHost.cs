@@ -13,10 +13,7 @@ namespace Host
 		Thread dbThread;
 		Queue<IQuery> dbQueue;
 		List<IDevice> devices;
-		//List<IStorageAdapter> adapters;
 		Thread devicesThread;
-		//Queue<string> outputQueue;
-		//Thread outputThread;
 		ITimer timer;
 		EventWaitHandle timerSignal;
 		EventWaitHandle queriesReadySignal;
@@ -29,34 +26,28 @@ namespace Host
 
         }*/
 
-
-		//
-		// примерная реализация таймера
-		//
-		#region Zaglushka
-
 		const int QCAPACITY = 20; // TODO: move this variable into the config class
 
 		/// <summary>
-		/// Заглушка host-a
+		/// Конструктор Заглушка host-a
 		/// </summary>
 		/// <param name="dummy">If set to <c>true</c> dummy.</param>
 		public CollectorHost (bool dummy)
 		{
 			db = null;
 			dbThread = new Thread (new ThreadStart (HandleDBRequest));
-			dbQueue = new Queue<IQuery> (QCAPACITY);
-			devices = new List<IDevice> (3);
-			//adapters = null;
+			dbQueue = new Queue<IQuery> (QCAPACITY); // TODO: load capacity from config
+			devices = new List<IDevice> (3); // TODO: generate IDevices list from config
 			devicesThread = new Thread (new ThreadStart (CollectDeviceInfo));
-			//outputQueue = new Queue<string> (QCAPACITY);
-			//outputThread = new Thread (new ThreadStart (WriteToGUIConsole));
 			timer = new TimeIntervalTimer (1000);
 			timerSignal = new ManualResetEvent (false);
 			queriesReadySignal = new ManualResetEvent (false);
 
 		}
 
+		/// <summary>
+		/// Ждет запросы к БД в отдельном потоке
+		/// </summary>
 		void HandleDBRequest ()
 		{
 			int count;
@@ -107,6 +98,9 @@ namespace Host
 			}
 		}
 
+		/// <summary>
+		/// Собирает информацию с устройств
+		/// </summary>
 		void CollectDeviceInfo ()
 		{
 			object buf;
@@ -143,24 +137,9 @@ namespace Host
 			}
 		}
 
-		public event OutputPendingDelegate OutputPending;
-
-		public delegate void OutputPendingDelegate (string displayMe);
-
-		void OnOutputPending () {
-			/*lock (outputQueue) {
-				if (OutputPending != null && outputQueue.Count > 0)
-					OutputPending (outputQueue.Dequeue ());
-			}*/
-		}
-
-		void OnOutputPending (string msg) {
-			if (OutputPending != null)
-				OutputPending (msg);
-		}
-
-		#endregion Zaglushka
-
+		/// <summary>
+		/// Начинает снятия информации с устройств и запис в БД
+		/// </summary>
 		public void Start ()
 		{
 			timer.Init (timerSignal);
@@ -169,6 +148,9 @@ namespace Host
 			dbThread.Start ();
 		}
 
+		/// <summary>
+		/// Перекращает работу потоков
+		/// </summary>
 		public void Stop ()
 		{
 			timer.Stop ();
@@ -179,6 +161,22 @@ namespace Host
 			// TODO: re-init threads
 		}
 
+		/// <summary>
+		/// Происходит когда есть информация для вывода
+		/// </summary>
+		public event OutputPendingDelegate OutputPending;
+
+		public delegate void OutputPendingDelegate (string displayMe);
+
+		void OnOutputPending (string msg) {
+			if (OutputPending != null)
+				OutputPending (msg);
+		}
+
+		/// <summary>
+		/// Отправляет msg для вывод на экран
+		/// </summary>
+		/// <param name="msg">Message.</param>
 		void OutputMsg (string msg)
 		{
 			OnOutputPending (msg);
@@ -189,6 +187,7 @@ namespace Host
 		public void Dispose ()
 		{
 			// TODO: Добавь все что требует очистку здесь
+			// TODO: Check if threads are working and stop them if they are.
 		}
 
 		#endregion
