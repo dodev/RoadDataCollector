@@ -11,7 +11,7 @@ namespace DBConnection
 		/// </summary>
 		/// <param name="deviceName">the id of the device</param>
 		/// <returns>The adapters.</returns>
-		IStorageAdapter CreateAdapters (string deviceName);
+		IStorageAdapter CreateAdapter (string deviceName);
 	}
 }
 

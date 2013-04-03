@@ -7,9 +7,10 @@ namespace Host.Configuration
 	{
 		IDictionary<string, object> items = new Dictionary<string, object> ()
 		{
-			{"interval", 1000},
+			{"timer_time_interval_ms", 1000},
 			{"queue_capacity", 20},
-			{"db_conf", new DBConfiguration ("test", "dummy_db", "dodo", "dodo")}
+			{"db_conf", new DBConfiguration ("test", "dummy_db", "dodo", "dodo", "TextFileDB")},
+			{"dev_conf_list", new DeviceConfiguration[] {new DeviceConfiguration("dummy_device", "Пробное устройство", "DummyDevice")}}
 		};
 
 		public DummyConfigurator ()

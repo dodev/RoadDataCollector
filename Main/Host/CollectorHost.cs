@@ -18,20 +18,8 @@ namespace Host
 		ITimer timer;
 		EventWaitHandle timerSignal;
 		EventWaitHandle queriesReadySignal;
-
 		IConfigurator conf;
-
 		bool isInitialized;
-
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        /*public CollectorHost()
-        {
-
-        }*/
-
-		const int QCAPACITY = 20; // TODO: move this variable into the config class
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Host.CollectorHost"/> class.
@@ -47,15 +35,52 @@ namespace Host
 		{
 			if (isInitialized)
 				return;
+			try {
+				// настраиваем БД
+				var dbConf = conf.GetItem ("db_conf") as DBConfiguration;
+				if (dbConf == null)
+					throw new Exception ("'db_conf' item coulnd't be found in the configuration");
+				IDBFactory dbFactory = Activator.CreateInstance (dbConf.FactoryType) as IDBFactory;
+				db = dbFactory.CreateConnection ();
+				dbThread = new Thread (new ParameterizedThreadStart (HandleDBRequest));
+				// и очередь БД
+				var capacity = conf.GetItem ("queue_capacity");
+				if (capacity == null)
+					throw new Exception ("queue_capacity item couldn't be found in the configuration");
+				dbQueue = new Queue<IQuery> ((int)capacity);
 
-			db = null;
-			dbThread = new Thread (new ParameterizedThreadStart (HandleDBRequest));
-			dbQueue = new Queue<IQuery> (QCAPACITY); // TODO: load capacity from config
-			devices = new List<IDevice> (3); // TODO: generate IDevices list from config
-			devicesThread = new Thread (new ThreadStart (CollectDeviceInfo));
-			timer = new TimeIntervalTimer (1000);
-			timerSignal = new ManualResetEvent (false);
-			queriesReadySignal = new ManualResetEvent (false);
+				// список устройств
+				var devConfList = conf.GetItem ("dev_conf_list") as DeviceConfiguration[];
+				if (devConfList == null)
+					throw new Exception ("'dev_conf_list' couldn't be found in the configuration");
+				devices = new List<IDevice> (devConfList.Length);
+				foreach (DeviceConfiguration devConf in devConfList) {
+					IDevice dev = Activator.CreateInstance (devConf.TypeRepresentation) as IDevice;
+					dev.Init (devConf.ID, dbFactory.CreateAdapter (devConf.ID));
+					devices.Add (dev);
+				}
+				devicesThread = new Thread (new ThreadStart (CollectDeviceInfo));
+
+				// настройки таймера
+				// TODO: add mechanism for changing timers
+				var timeInterval = conf.GetItem ("time_interval_ms");
+				if (timeInterval == null)
+					throw new Exception ("'time_interval_ms' couldn't be found in the configuration object");
+				timer = new TimeIntervalTimer ((int)timeInterval);
+
+				// событие для таймера
+				timerSignal = new ManualResetEvent (false);
+
+				// событие для БД
+				queriesReadySignal = new ManualResetEvent (false);
+
+				isInitialized = true;
+
+			} catch (Exception ex) {
+				OutputMsg ("Error occured: " + ex.ToString ());
+			} finally {
+				isInitialized = false;
+			}
 		}
 
 
@@ -165,6 +190,9 @@ namespace Host
 		public void Start ()
 		{
 			try {
+				if (! isInitialized)
+					return;
+
 				OutputMsg ("Starting devices...");
 				timer.Init (timerSignal);
 				timer.Start ();
@@ -195,6 +223,7 @@ namespace Host
 			// TODO: disconnect from DB
 			isInitialized = false;
 			// TODO: re-init threads
+			// TODO: add events for starting and stopping
 		}
 
 		/// <summary>
