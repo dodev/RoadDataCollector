@@ -37,6 +37,9 @@
     <Compile Include="CollectorHost.cs" />
     <Compile Include="IDevice.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Configuration\IConfigurator.cs" />
+    <Compile Include="Configuration\DummyConfigurator.cs" />
+    <Compile Include="Configuration\DBConfiguration.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -55,5 +58,8 @@
       <Project>{EBCB7BCD-C7F3-4802-9AFD-7B6C5F008634}</Project>
       <Name>Timers</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Configuration\" />
   </ItemGroup>
 </Project>

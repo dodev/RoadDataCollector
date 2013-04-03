@@ -4,6 +4,7 @@ using System.Threading;
 
 using DBConnection;
 using Timers;
+using Host.Configuration;
 
 namespace Host
 {
@@ -18,6 +19,10 @@ namespace Host
 		EventWaitHandle timerSignal;
 		EventWaitHandle queriesReadySignal;
 
+		IConfigurator conf;
+
+		bool isInitialized;
+
         /// <summary>
         /// Default constructor
         /// </summary>
@@ -29,27 +34,45 @@ namespace Host
 		const int QCAPACITY = 20; // TODO: move this variable into the config class
 
 		/// <summary>
-		/// Конструктор Заглушка host-a
+		/// Initializes a new instance of the <see cref="Host.CollectorHost"/> class.
 		/// </summary>
-		/// <param name="dummy">If set to <c>true</c> dummy.</param>
-		public CollectorHost (bool dummy)
+		/// <param name="conf">Conf.</param>
+		public CollectorHost (IConfigurator conf)
 		{
+			this.conf = conf;
+			isInitialized = false;
+		}
+
+		public void Init ()
+		{
+			if (isInitialized)
+				return;
+
 			db = null;
-			dbThread = new Thread (new ThreadStart (HandleDBRequest));
+			dbThread = new Thread (new ParameterizedThreadStart (HandleDBRequest));
 			dbQueue = new Queue<IQuery> (QCAPACITY); // TODO: load capacity from config
 			devices = new List<IDevice> (3); // TODO: generate IDevices list from config
 			devicesThread = new Thread (new ThreadStart (CollectDeviceInfo));
 			timer = new TimeIntervalTimer (1000);
 			timerSignal = new ManualResetEvent (false);
 			queriesReadySignal = new ManualResetEvent (false);
-
 		}
+
 
 		/// <summary>
 		/// Ждет запросы к БД в отдельном потоке
 		/// </summary>
-		void HandleDBRequest ()
+		void HandleDBRequest (object dbConfig)
 		{
+			var dbConf = dbConfig as DBConfiguration;
+
+			/*if (db == null || dbConf == null)
+				throw new Exception ("DB configuration or connection object not available");
+
+			// связываемся с БД
+			db.Connect (dbConf.Address, dbConf.Name, dbConf.User, dbConf.Password);
+			OutputMsg ("Successfully connected to DB"); */
+
 			int count;
 			IQuery queryBuf;
 
@@ -91,7 +114,6 @@ namespace Host
 					OutputMsg (ex.ToString ());
 				}
 				// выполняются все запросы в очереди
-
 
 				// выключаем сигнал пока не добавится элементов в очереди
 				queriesReadySignal.Reset ();
@@ -142,10 +164,19 @@ namespace Host
 		/// </summary>
 		public void Start ()
 		{
-			timer.Init (timerSignal);
-			timer.Start ();
-			devicesThread.Start ();
-			dbThread.Start ();
+			try {
+				OutputMsg ("Starting devices...");
+				timer.Init (timerSignal);
+				timer.Start ();
+				// TODO: connect to DB
+				devicesThread.Start ();
+				dbThread.Start (conf.GetItem ("db_conf"));
+			} catch (Exception ex) {
+				OutputMsg ("Error occured: " + ex.ToString ());
+				OutputMsg ("Terminating session.");
+			} finally {
+				Stop ();
+			}
 		}
 
 		/// <summary>
@@ -153,11 +184,16 @@ namespace Host
 		/// </summary>
 		public void Stop ()
 		{
+			OutputMsg ("Stopping host...");
 			timer.Stop ();
 			devicesThread.Abort ();
 			devicesThread.Join ();
+			OutputMsg ("Devices stopped");
 			dbThread.Abort ();
 			dbThread.Join ();
+			OutputMsg ("Database communication stopped");
+			// TODO: disconnect from DB
+			isInitialized = false;
 			// TODO: re-init threads
 		}
 

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 
 using Host;
+using Host.Configuration;
+
+// TODO: сделать консоль по-больше
 
 namespace GUI
 {
@@ -11,15 +14,25 @@ namespace GUI
         //objects
         List<TabPage> tabPageBuffer = new List<TabPage>(2);     //to make tabPages invisible
 		CollectorHost host = null; // the host
+		IConfigurator conf = null;
 
         //Form initialize
         public Form1()
         {
+			conf = new DummyConfigurator ();
+			conf.Load (); // TODO: загрузить конфигурации из внешнего източника; TODO: показать информацию о том что сейчас идет загрузка конфигурации
+
+			// TODO: Сгенерировать элементы GUI в зависимости от конфигурации
+			// напр.: перечислить в списке доступных устройств, только те для которых
+			// налични данные в конфигурации
+
             InitializeComponent();
-			host = new CollectorHost (true); // zaglushka host-a
+
+			host = new CollectorHost (conf);
 			// событие которое оповещает о наличие информация для 
 			// запис в текстовое поле вывода
-			host.OutputPending += HandleOutputPending; 
+			host.OutputPending += HandleOutputPending;
+			// TODO: ловит исключении и отображать их в консоле
         }
 
         void HandleOutputPending (string displayMe)
@@ -55,7 +68,9 @@ namespace GUI
                 tabControl.TabPages.Remove(tabControl.TabPages[2]);
                 tabPageBuffer.Add(tabControl.TabPages[1]);
                 tabControl.TabPages.Remove(tabControl.TabPages[1]);
+				// TODO: Заполнить conf с текущих настроек из формы
 				// GO! GO! GO! запускаме работа хоста
+				host.Init ();
 				host.Start ();
             }
             else
