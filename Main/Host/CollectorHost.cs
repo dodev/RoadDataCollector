@@ -5,6 +5,7 @@ using System.Threading;
 using DBConnection;
 using Timers;
 using Host.Configuration;
+using Devices;
 
 namespace Host
 {
@@ -91,12 +92,12 @@ namespace Host
 		{
 			var dbConf = dbConfig as DBConfiguration;
 
-			/*if (db == null || dbConf == null)
+			if (db == null || dbConf == null)
 				throw new Exception ("DB configuration or connection object not available");
 
 			// связываемся с БД
 			db.Connect (dbConf.Address, dbConf.Name, dbConf.User, dbConf.Password);
-			OutputMsg ("Successfully connected to DB"); */
+			OutputMsg ("Successfully connected to DB"); 
 
 			int count;
 			IQuery queryBuf;
