@@ -9,13 +9,13 @@ namespace DBConnection
 	/// Генерируется строка содержащая запрос на вставки в БД
 	/// используя StringBuilder.
 	/// </summary>
-	public class InsertStringQuery : IQuery
+	public class DummyQuery : IQuery
 	{
 		string table;
 		IEnumerable<string> attributes;
 		IEnumerable<string> values;
 
-		public InsertStringQuery (string table, IEnumerable<string> attributes, IEnumerable<string> values)
+		public DummyQuery (string table, IEnumerable<string> attributes, IEnumerable<string> values)
 		{
 			this.table = table;
 			this.attributes = attributes;
