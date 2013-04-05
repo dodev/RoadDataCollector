@@ -6,12 +6,16 @@ namespace DBConnection
 {
 	public interface IDBFactory
 	{
+		/// <summary>
+		/// Передает конфигурационный объект фабрику.
+		/// </summary>
+		/// <param name="config">Config.</param>
 		void InitDBLayer (DBConfiguration config);
 
 		IDBConnection CreateConnection ();
 
 		/// <summary>
-		/// Создает адаптер для каждого IDevice и возвращает его через yeild return
+		/// Дает имя класса адаптера для каждого IDevice.
 		/// </summary>
 		/// <param name="deviceName">the id of the device</param>
 		/// <returns>The adapters.</returns>

@@ -4,7 +4,7 @@ namespace Configuration
 {
 	public interface IConfigurator : IDisposable
 	{
-		bool Load ();
+		void Load ();
 		object GetItem (string name);
 		void SetItem (string name, object value);
 	}

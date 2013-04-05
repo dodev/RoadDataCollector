@@ -123,7 +123,7 @@ namespace Host
 						OutputMsg ("Recording to DB"); // Dummy output TODO: remove this when everything is working
 
 						queryBuf = null;
-						// вытаскиваем первы запрос из очереди
+						// вытаскиваем первого запроса из очереди
 						lock (dbQueue) {
 							if (dbQueue.Count > 0)
 								queryBuf = dbQueue.Dequeue ();
@@ -207,7 +207,6 @@ namespace Host
 				OutputMsg ("Starting devices...");
 				timer.Init (timerSignal);
 				timer.Start ();
-				// TODO: fire events
 				devicesThread.Start ();
 				dbThread.Start ();
 
@@ -235,10 +234,10 @@ namespace Host
 			dbThread.Join ();
 			db.Disconnect ();
 			OutputMsg ("Database communication stopped");
-			// TODO: disconnect from DB
 			isInitialized = false;
-			// TODO: re-init threads
 			// TODO: add events for starting and stopping
+			// TODO: add try catch
+			// TODO: stop the host on form closing
 		}
 
 		/// <summary>

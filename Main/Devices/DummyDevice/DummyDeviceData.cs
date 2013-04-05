@@ -2,6 +2,9 @@ using System;
 
 namespace Devices
 {
+	/// <summary>
+	/// Содержит информацию из устройства и методы для ее извлечения.
+	/// </summary>
 	public class DummyDeviceData
 	{
 		int x;

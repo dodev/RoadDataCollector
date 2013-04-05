@@ -34,7 +34,6 @@
     <Compile Include="IDBConnection.cs" />
     <Compile Include="IDBFactory.cs" />
     <Compile Include="IQuery.cs" />
-    <Compile Include="IStorageAdapter.cs" />
     <Compile Include="DummyDBConnection\DummyDBFactory.cs" />
     <Compile Include="DummyDBConnection\DummyDBConnection.cs" />
     <Compile Include="DummyDBConnection\DummyQuery.cs" />

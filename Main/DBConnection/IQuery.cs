@@ -7,7 +7,7 @@ namespace DBConnection
 	/// </summary>
 	public interface IQuery
 	{
-		string GetSQL ();
+		object GetQueryData ();
 	}
 }
 

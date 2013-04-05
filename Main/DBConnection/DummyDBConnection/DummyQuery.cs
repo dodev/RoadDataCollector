@@ -5,7 +5,7 @@ using System.Text;
 namespace DBConnection
 {
 	/// <summary>
-	/// Пример реализации IQuery для СУБД MySQL.
+	/// Пример реализации IQuery для СУБД DummyDB (текстовой файл)
 	/// Генерируется строка содержащая запрос на вставки в БД
 	/// используя StringBuilder.
 	/// </summary>
@@ -15,6 +15,13 @@ namespace DBConnection
 		IEnumerable<string> attributes;
 		IEnumerable<string> values;
 
+		/// <summary>
+		/// Конструктор может имет любую структуру, т.к. он не включен в интерфейса IQuery
+		/// Используйте его для добавления информации в объекте
+		/// </summary>
+		/// <param name="table">Table.</param>
+		/// <param name="attributes">Attributes.</param>
+		/// <param name="values">Values.</param>
 		public DummyQuery (string table, IEnumerable<string> attributes, IEnumerable<string> values)
 		{
 			this.table = table;
@@ -24,7 +31,7 @@ namespace DBConnection
 
 		#region IQuery implementation
 
-		string IQuery.GetSQL ()
+		public object GetQueryData ()
 		{
 			StringBuilder sb = new StringBuilder ();
 			sb.Append ("INSERT INTO ");
