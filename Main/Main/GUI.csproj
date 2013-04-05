@@ -58,6 +58,10 @@
       <Project>{518A0A16-F2AC-4ABC-B991-BAF5F8D81EA0}</Project>
       <Name>Host</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Configuration\Configuration.csproj">
+      <Project>{B2496050-6066-413A-80EB-A7465DB65903}</Project>
+      <Name>Configuration</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

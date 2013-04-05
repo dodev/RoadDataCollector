@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{E8C93498-9523-4768-815C-636A40BA0D1F}</ProjectGuid>
+    <ProjectGuid>{B2496050-6066-413A-80EB-A7465DB65903}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>DBConnection</RootNamespace>
-    <AssemblyName>DBConnection</AssemblyName>
+    <RootNamespace>Configuration</RootNamespace>
+    <AssemblyName>Configuration</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,22 +31,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="IDBConnection.cs" />
-    <Compile Include="IDBFactory.cs" />
-    <Compile Include="IQuery.cs" />
-    <Compile Include="IStorageAdapter.cs" />
-    <Compile Include="DummyDBConnection\DummyDBFactory.cs" />
-    <Compile Include="DummyDBConnection\DummyDBConnection.cs" />
-    <Compile Include="DummyDBConnection\DummyQuery.cs" />
+    <Compile Include="DBConfiguration.cs" />
+    <Compile Include="DeviceConfiguration.cs" />
+    <Compile Include="DummyConfigurator.cs" />
+    <Compile Include="IConfigurator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="DummyDBConnection\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Configuration\Configuration.csproj">
-      <Project>{B2496050-6066-413A-80EB-A7465DB65903}</Project>
-      <Name>Configuration</Name>
-    </ProjectReference>
-  </ItemGroup>
 </Project>

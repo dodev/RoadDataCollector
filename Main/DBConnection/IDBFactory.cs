@@ -1,9 +1,13 @@
 using System;
 
+using Configuration;
+
 namespace DBConnection
 {
 	public interface IDBFactory
 	{
+		void InitDBLayer (DBConfiguration config);
+
 		IDBConnection CreateConnection ();
 
 		/// <summary>
@@ -11,7 +15,7 @@ namespace DBConnection
 		/// </summary>
 		/// <param name="deviceName">the id of the device</param>
 		/// <returns>The adapters.</returns>
-		IStorageAdapter CreateAdapter (string deviceName);
+		string GetAdapterTypeName (string deviceId);
 	}
 }
 

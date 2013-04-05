@@ -1,20 +1,22 @@
 using System;
 using System.Collections.Generic;
 
-namespace Host.Configuration
+namespace Configuration
 {
 	public class DummyConfigurator : IConfigurator
 	{
-		IDictionary<string, object> items = new Dictionary<string, object> ()
-		{
-			{"timer_time_interval_ms", 1000},
-			{"queue_capacity", 20},
-			{"db_conf", new DBConfiguration ("test", "dummy_db", "dodo", "dodo", "TextFileDB")},
-			{"dev_conf_list", new DeviceConfiguration[] {new DeviceConfiguration("dummy_device", "Пробное устройство", "DummyDevice")}}
-		};
+		IDictionary<string, object> items;
 
 		public DummyConfigurator ()
 		{
+			IDictionary<string, string> dummyDBAdapters = new Dictionary<string, string> () {{"dummy_device", "DummyDeviceDummyDBAdapter"}};
+			items = new Dictionary<string, object> ()
+			{
+				{"timer_time_interval_ms", 1000},
+				{"queue_capacity", 20},
+				{"db_conf", new DBConfiguration ("test", "dummy_db", "dodo", "dodo", "DBConnection", "DBConnection", "DummyDBFactory", dummyDBAdapters)},
+				{"dev_conf_list", new DeviceConfiguration[] {new DeviceConfiguration("dummy_device", "Пробное устройство", "Devices", "Devices", "DummyDevice")}}
+			};
 		}
 
 		#region IConfigurator implementation

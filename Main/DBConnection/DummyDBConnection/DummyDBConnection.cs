@@ -1,33 +1,52 @@
 using System;
+using System.IO;
 
 namespace DBConnection
 {
 	public class DummyDBConnection : IDBConnection
 	{
-		public DummyDBConnection ()
+		string serverAddress;
+		string dbName;
+		string dbUser;
+		string dbPassword;
+
+		StreamWriter writer;
+
+		const string DB_FILE = "dummy_db.txt";
+
+		public DummyDBConnection (string serverUrl, string database, string user, string password)
 		{
+			serverAddress = serverUrl;
+			dbName = database;
+			dbUser = user;
+			dbPassword = password;
 		}
 
 		#region IDBConnection implementation
 
-		public void Connect (string serverUrl, string database, string user, string password)
+		public void Connect ()
 		{
+			// use serverAddress, dbName, dbUser, dbPassword to connect
 			//throw new NotImplementedException ();
+			writer = new StreamWriter (DB_FILE);
 		}
 
 		public void Disconnect ()
 		{
-			throw new NotImplementedException ();
+			writer.Close ();
+			writer.Dispose ();
 		}
 
 		public bool ExecuteQuery (IQuery query)
 		{
-			throw new NotImplementedException ();
+			string test = query.GetSQL ();
+			writer.WriteLine (test);
+			return true;
 		}
 
 		public string GetLastResponse ()
 		{
-			throw new NotImplementedException ();
+			return "Everything is OK :)";
 		}
 
 		#endregion
@@ -36,7 +55,7 @@ namespace DBConnection
 
 		public void Dispose ()
 		{
-			throw new NotImplementedException ();
+
 		}
 
 		#endregion

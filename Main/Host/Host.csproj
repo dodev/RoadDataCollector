@@ -36,10 +36,6 @@
   <ItemGroup>
     <Compile Include="CollectorHost.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Configuration\IConfigurator.cs" />
-    <Compile Include="Configuration\DummyConfigurator.cs" />
-    <Compile Include="Configuration\DBConfiguration.cs" />
-    <Compile Include="Configuration\DeviceConfiguration.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -62,8 +58,9 @@
       <Project>{257FFD3D-68F6-4246-99B1-DA1D039C35DF}</Project>
       <Name>Devices</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Configuration\" />
+    <ProjectReference Include="..\Configuration\Configuration.csproj">
+      <Project>{B2496050-6066-413A-80EB-A7465DB65903}</Project>
+      <Name>Configuration</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

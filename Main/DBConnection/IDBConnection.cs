@@ -8,7 +8,7 @@ namespace DBConnection
 	/// </summary>
 	public interface IDBConnection : IDisposable
 	{
-		void Connect (string serverUrl, string database, string user, string password);
+		void Connect ();
 		void Disconnect ();
 		bool ExecuteQuery (IQuery query);
 		string GetLastResponse ();

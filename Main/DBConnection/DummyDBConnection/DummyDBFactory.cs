@@ -1,24 +1,35 @@
 using System;
 
+using Configuration;
+
 namespace DBConnection
 {
 	public class DummyDBFactory : IDBFactory
 	{
+		DBConfiguration config;
+
 		public DummyDBFactory ()
 		{
 		}
 
 		#region IDBFactory implementation
 
-		public IDBConnection CreateConnection ()
+		public void InitDBLayer (DBConfiguration config)
 		{
-			return new DummyDBConnection ();
+			this.config = config;
 		}
 
-		public IStorageAdapter CreateAdapter (string deviceName)
+		public IDBConnection CreateConnection ()
 		{
-			// TODO: include config and return adapters depending on te device type
-			throw new NotImplementedException ();
+			return new DummyDBConnection (config.Address, config.Name, config.User, config.Password);
+		}
+
+		public string GetAdapterTypeName (string deviceName)
+		{
+			if (config.ApprovedAdapters.ContainsKey (deviceName))
+				return config.ApprovedAdapters[deviceName];
+
+			return String.Empty;
 		}
 
 		#endregion

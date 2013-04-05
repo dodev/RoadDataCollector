@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Runtime.Remoting;
 
 using DBConnection;
 using Timers;
-using Host.Configuration;
+using Configuration;
 using Devices;
 
 namespace Host
@@ -41,9 +42,11 @@ namespace Host
 				var dbConf = conf.GetItem ("db_conf") as DBConfiguration;
 				if (dbConf == null)
 					throw new Exception ("'db_conf' item coulnd't be found in the configuration");
-				IDBFactory dbFactory = Activator.CreateInstance (dbConf.FactoryType) as IDBFactory;
+
+				var dbFactory = Activator.CreateInstance (GetType (dbConf.Assembly, dbConf.Namespace, dbConf.FactoryType)) as IDBFactory;
+				dbFactory.InitDBLayer (dbConf);
 				db = dbFactory.CreateConnection ();
-				dbThread = new Thread (new ParameterizedThreadStart (HandleDBRequest));
+				dbThread = new Thread (new ThreadStart (HandleDBRequest));
 				// и очередь БД
 				var capacity = conf.GetItem ("queue_capacity");
 				if (capacity == null)
@@ -56,17 +59,22 @@ namespace Host
 					throw new Exception ("'dev_conf_list' couldn't be found in the configuration");
 				devices = new List<IDevice> (devConfList.Length);
 				foreach (DeviceConfiguration devConf in devConfList) {
-					IDevice dev = Activator.CreateInstance (devConf.TypeRepresentation) as IDevice;
-					dev.Init (devConf.ID, dbFactory.CreateAdapter (devConf.ID));
+					var dev = Activator.CreateInstance (GetType (devConf.Assembly, devConf.Namespace, devConf.DeviceType)) as IDevice;
+					if (dev == null)
+						throw new Exception ("Could not create device with id " + devConf.ID);
+					var adapter = Activator.CreateInstance (GetType (devConf.Assembly, devConf.Namespace, dbFactory.GetAdapterTypeName (devConf.ID))) as IStorageAdapter;
+					if (adapter == null)
+						throw new Exception ("Adapter for device with id '" + dev.ID + "' could not be found!");
+					dev.Init (devConf.ID, adapter);
 					devices.Add (dev);
 				}
 				devicesThread = new Thread (new ThreadStart (CollectDeviceInfo));
 
 				// настройки таймера
 				// TODO: add mechanism for changing timers
-				var timeInterval = conf.GetItem ("time_interval_ms");
+				var timeInterval = conf.GetItem ("timer_time_interval_ms");
 				if (timeInterval == null)
-					throw new Exception ("'time_interval_ms' couldn't be found in the configuration object");
+					throw new Exception ("'timer_time_interval_ms' couldn't be found in the configuration object");
 				timer = new TimeIntervalTimer ((int)timeInterval);
 
 				// событие для таймера
@@ -79,24 +87,26 @@ namespace Host
 
 			} catch (Exception ex) {
 				OutputMsg ("Error occured: " + ex.ToString ());
-			} finally {
 				isInitialized = false;
 			}
+		}
+
+		Type GetType (string assembly, string nmspace, string type)
+		{
+			return Type.GetType (String.Format ("{0}.{1}, {2}", nmspace, type, assembly));
 		}
 
 
 		/// <summary>
 		/// Ждет запросы к БД в отдельном потоке
 		/// </summary>
-		void HandleDBRequest (object dbConfig)
+		void HandleDBRequest ()
 		{
-			var dbConf = dbConfig as DBConfiguration;
-
-			if (db == null || dbConf == null)
+			if (db == null)
 				throw new Exception ("DB configuration or connection object not available");
 
 			// связываемся с БД
-			db.Connect (dbConf.Address, dbConf.Name, dbConf.User, dbConf.Password);
+			db.Connect ();
 			OutputMsg ("Successfully connected to DB"); 
 
 			int count;
@@ -190,20 +200,20 @@ namespace Host
 		/// </summary>
 		public void Start ()
 		{
+			if (! isInitialized)
+				return;
 			try {
-				if (! isInitialized)
-					return;
 
 				OutputMsg ("Starting devices...");
 				timer.Init (timerSignal);
 				timer.Start ();
-				// TODO: connect to DB
+				// TODO: fire events
 				devicesThread.Start ();
-				dbThread.Start (conf.GetItem ("db_conf"));
+				dbThread.Start ();
+
 			} catch (Exception ex) {
 				OutputMsg ("Error occured: " + ex.ToString ());
 				OutputMsg ("Terminating session.");
-			} finally {
 				Stop ();
 			}
 		}
@@ -213,6 +223,9 @@ namespace Host
 		/// </summary>
 		public void Stop ()
 		{
+			if (! isInitialized)
+				return;
+
 			OutputMsg ("Stopping host...");
 			timer.Stop ();
 			devicesThread.Abort ();
@@ -220,6 +233,7 @@ namespace Host
 			OutputMsg ("Devices stopped");
 			dbThread.Abort ();
 			dbThread.Join ();
+			db.Disconnect ();
 			OutputMsg ("Database communication stopped");
 			// TODO: disconnect from DB
 			isInitialized = false;

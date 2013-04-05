@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 
 using Host;
-using Host.Configuration;
+using Configuration;
 
 // TODO: сделать консоль по-больше
 

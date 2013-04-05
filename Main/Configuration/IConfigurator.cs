@@ -1,6 +1,6 @@
 using System;
 
-namespace Host.Configuration
+namespace Configuration
 {
 	public interface IConfigurator : IDisposable
 	{
