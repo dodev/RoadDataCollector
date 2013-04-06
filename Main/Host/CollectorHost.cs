@@ -20,17 +20,21 @@ namespace Host
 		ITimer timer;
 		EventWaitHandle timerSignal;
 		EventWaitHandle queriesReadySignal;
-		IConfigurator conf;
+		IConfigurator config;
 		bool isInitialized;
+		bool isRunning;
+		bool isDisposing;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Host.CollectorHost"/> class.
 		/// </summary>
-		/// <param name="conf">Conf.</param>
+		/// <param name="conf">Configuration.</param>
 		public CollectorHost (IConfigurator conf)
 		{
-			this.conf = conf;
+			config = conf;
 			isInitialized = false;
+			isRunning = false;
+			isDisposing = false;
 		}
 
 		public void Init ()
@@ -38,8 +42,10 @@ namespace Host
 			if (isInitialized)
 				return;
 			try {
+				OnInitializing ();
+
 				// настраиваем БД
-				var dbConf = conf.GetItem ("db_conf") as DBConfiguration;
+				var dbConf = config.GetItem ("db_conf") as DBConfiguration;
 				if (dbConf == null)
 					throw new Exception ("'db_conf' item coulnd't be found in the configuration");
 
@@ -48,13 +54,13 @@ namespace Host
 				db = dbFactory.CreateConnection ();
 				dbThread = new Thread (new ThreadStart (HandleDBRequest));
 				// и очередь БД
-				var capacity = conf.GetItem ("queue_capacity");
+				var capacity = config.GetItem ("queue_capacity");
 				if (capacity == null)
 					throw new Exception ("queue_capacity item couldn't be found in the configuration");
 				dbQueue = new Queue<IQuery> ((int)capacity);
 
 				// список устройств
-				var devConfList = conf.GetItem ("dev_conf_list") as DeviceConfiguration[];
+				var devConfList = config.GetItem ("dev_conf_list") as DeviceConfiguration[];
 				if (devConfList == null)
 					throw new Exception ("'dev_conf_list' couldn't be found in the configuration");
 				devices = new List<IDevice> (devConfList.Length);
@@ -72,7 +78,7 @@ namespace Host
 
 				// настройки таймера
 				// TODO: add mechanism for changing timers
-				var timeInterval = conf.GetItem ("timer_time_interval_ms");
+				var timeInterval = config.GetItem ("timer_time_interval_ms");
 				if (timeInterval == null)
 					throw new Exception ("'timer_time_interval_ms' couldn't be found in the configuration object");
 				timer = new TimeIntervalTimer ((int)timeInterval);
@@ -85,12 +91,21 @@ namespace Host
 
 				isInitialized = true;
 
+				OnInitialized ();
+
 			} catch (Exception ex) {
-				OutputMsg ("Error occured: " + ex.ToString ());
+				OnOutputPending ("Error occured: " + ex.ToString ());
 				isInitialized = false;
 			}
 		}
 
+		/// <summary>
+		/// Возвращает System.Type из стринг для библиотеки, неймспейс, и имя типа
+		/// </summary>
+		/// <returns>The type.</returns>
+		/// <param name="assembly">Assembly.</param>
+		/// <param name="nmspace">Nmspace.</param>
+		/// <param name="type">Type.</param>
 		Type GetType (string assembly, string nmspace, string type)
 		{
 			return Type.GetType (String.Format ("{0}.{1}, {2}", nmspace, type, assembly));
@@ -107,7 +122,7 @@ namespace Host
 
 			// связываемся с БД
 			db.Connect ();
-			OutputMsg ("Successfully connected to DB"); 
+			OnOutputPending ("Successfully connected to DB"); 
 
 			int count;
 			IQuery queryBuf;
@@ -119,9 +134,8 @@ namespace Host
 
 				try {
 
+					// выполняем все запросы в очереди
 					do {
-						OutputMsg ("Recording to DB"); // Dummy output TODO: remove this when everything is working
-
 						queryBuf = null;
 						// вытаскиваем первого запроса из очереди
 						lock (dbQueue) {
@@ -132,10 +146,13 @@ namespace Host
 						// выполняем запроса
 						// предполагаем, что это будет медлено выполнятся
 						if (queryBuf != null) {
-							if ( ! db.ExecuteQuery (queryBuf))
+							if (db.ExecuteQuery (queryBuf)) {
+								// query прошло, дать потребителю знать 
+								OnOutputPending ("Executed query #0x"+queryBuf.GetHashCode ().ToString ("X"));
+							} else {
 								// если запрос не выполнился, покажи сообщение из СУБД
-								OutputMsg (db.GetLastResponse ());
-							// queryBuf.Dispose ();
+								OnOutputPending (db.GetLastResponse ());
+							}
 						}
 
 						// так как прошло много времени с момента выполнения запроса
@@ -146,10 +163,8 @@ namespace Host
 					} while (count > 0);
 
 				} catch (Exception ex) {
-					// выводим в консоль текст изключении
-					OutputMsg (ex.ToString ());
+					OnOutputPending (ex.Message);
 				}
-				// выполняются все запросы в очереди
 
 				// выключаем сигнал пока не добавится элементов в очереди
 				queriesReadySignal.Reset ();
@@ -165,32 +180,33 @@ namespace Host
 			IQuery queryBuf;
 
 			for (;;) {
+				// ждем следущего сигнала
 				timerSignal.WaitOne ();
 
 				try {
-					/*lock (outputQueue) {
-					 outputQueue.Enqueue ("Collect data method called!");
-					 } */
-
-					// TODO: COllect info from devices
+					// собираем инфу из устройств
 					foreach (IDevice dev in devices) {
+						// уведомляем потребителю
+						OnOutputPending ("Collecting data from " + dev.ID); 
+						// собиреам и проверяем
 						buf = dev.GetData ();
 						if (buf != null) {
+							// подготовливаем для БД
 							queryBuf = dev.Adapter.PrepareQuery (buf);
+							// добавляем в очереди запросов
 							lock (dbQueue) {
 								dbQueue.Enqueue (queryBuf);
 							}
-							// queriesReadySignal.Set (); TODO: uncomment this when testing is finished and the devices and adapters are working
+							// уведомить поток БД что есть запрос на выполнение
+							queriesReadySignal.Set ();
 						}
 					}
-					// TODO: generate queries
-					queriesReadySignal.Set (); // Dummy call TODO: remove this when devices and adapters are working
-					OutputMsg ("Collecting data from devices"); // Dummy output
 
 				} catch (Exception ex) {
-					OutputMsg (ex.ToString ());
+					OnOutputPending (ex.Message);
 				}
 
+				// выключаем сигнал
 				timerSignal.Reset ();
 			}
 		}
@@ -200,19 +216,24 @@ namespace Host
 		/// </summary>
 		public void Start ()
 		{
-			if (! isInitialized)
+			if ( ! isInitialized || isRunning)
 				return;
-			try {
 
-				OutputMsg ("Starting devices...");
+			try {
+				OnStarting ();
+
+				OnOutputPending ("Starting devices...");
 				timer.Init (timerSignal);
 				timer.Start ();
 				devicesThread.Start ();
 				dbThread.Start ();
+				isRunning = true;
+
+				OnStarted ();
 
 			} catch (Exception ex) {
-				OutputMsg ("Error occured: " + ex.ToString ());
-				OutputMsg ("Terminating session.");
+				OnOutputPending ("Error occured while trying to start data collection: " + ex.Message);
+				OnOutputPending ("Terminating session.");
 				Stop ();
 			}
 		}
@@ -224,26 +245,47 @@ namespace Host
 		{
 			if (! isInitialized)
 				return;
+			try {
+				OnStopping ();
 
-			OutputMsg ("Stopping host...");
-			timer.Stop ();
-			devicesThread.Abort ();
-			devicesThread.Join ();
-			OutputMsg ("Devices stopped");
-			dbThread.Abort ();
-			dbThread.Join ();
-			db.Disconnect ();
-			OutputMsg ("Database communication stopped");
-			isInitialized = false;
-			// TODO: add events for starting and stopping
-			// TODO: add try catch
-			// TODO: stop the host on form closing
+				OnOutputPending ("Stopping host...");
+				timer.Stop ();
+				devicesThread.Abort ();
+				devicesThread.Join ();
+				OnOutputPending ("Devices stopped");
+				dbThread.Abort ();
+				dbThread.Join ();
+				db.Disconnect ();
+				OnOutputPending ("Database communication stopped");
+
+				OnStopped ();
+			
+			} catch (Exception ex) {
+				OnOutputPending ("Error occured while trying to stop data collection: " + ex.Message);
+				OnOutputPending ("Terminating session.");
+			} finally {
+				// re-init on next run
+				isInitialized = false;
+				isRunning = false;
+			}
 		}
+
+		public bool IsRunning {
+			get { return isRunning; }
+		}
+
+		#region Events
 
 		/// <summary>
 		/// Происходит когда есть информация для вывода
 		/// </summary>
 		public event OutputPendingDelegate OutputPending;
+		public event EventHandler<EventArgs> Initializing;
+		public event EventHandler<EventArgs> Initialized;
+		public event EventHandler<EventArgs> Starting;
+		public event EventHandler<EventArgs> Started;
+		public event EventHandler<EventArgs> Stopping;
+		public event EventHandler<EventArgs> Stopped;
 
 		public delegate void OutputPendingDelegate (string displayMe);
 
@@ -252,21 +294,59 @@ namespace Host
 				OutputPending (msg);
 		}
 
-		/// <summary>
-		/// Отправляет msg для вывод на экран
-		/// </summary>
-		/// <param name="msg">Message.</param>
-		void OutputMsg (string msg)
-		{
-			OnOutputPending (msg);
+		void OnInitializing () {
+			if (Initializing != null)
+				Initializing (this, EventArgs.Empty);
 		}
+
+		void OnInitialized () {
+			if (Initialized != null)
+				Initialized (this, EventArgs.Empty);
+		}
+
+		void OnStarting () {
+			if (Starting != null)
+				Starting (this, EventArgs.Empty);
+		}
+
+		void OnStarted () {
+			if (Started != null)
+				Started (this, EventArgs.Empty);
+		}
+
+		void OnStopping () {
+			if (Stopping != null)
+				Stopping (this, EventArgs.Empty);
+		}
+
+		void OnStopped () {
+			if (Stopped != null)
+				Stopped (this, EventArgs.Empty);
+		}
+
+		#endregion Events
 
 		#region IDisposable implementation
 
 		public void Dispose ()
 		{
-			// TODO: Добавь все что требует очистку здесь
-			// TODO: Check if threads are working and stop them if they are.
+			// если объекты поля хоста не инициализированы нет смысла их удалять
+			if (! isInitialized)
+				return;
+
+			// если метод уже вызвали хотя бы 1 раз
+			if (isDisposing)
+				return;
+
+			// если хост еще работает
+			if (isRunning)
+				Stop ();
+
+			// даем все уборщику
+			db.Dispose ();
+			queriesReadySignal.Dispose ();
+			timerSignal.Dispose ();
+			isDisposing = true;
 		}
 
 		#endregion

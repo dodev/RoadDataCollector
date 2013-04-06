@@ -20,7 +20,7 @@ namespace GUI
         public Form1()
         {
 			conf = new DummyConfigurator ();
-			conf.Load (); // TODO: загрузить конфигурации из внешнего източника; TODO: показать информацию о том что сейчас идет загрузка конфигурации
+			conf.Load (); // TODO: показать информацию о том что сейчас идет загрузка конфигурации
 
 			// TODO: Сгенерировать элементы GUI в зависимости от конфигурации
 			// напр.: перечислить в списке доступных устройств, только те для которых
@@ -29,10 +29,57 @@ namespace GUI
             InitializeComponent();
 
 			host = new CollectorHost (conf);
+
 			// событие которое оповещает о наличие информация для 
 			// запис в текстовое поле вывода
 			host.OutputPending += HandleOutputPending;
-			// TODO: ловит исключении и отображать их в консоле
+
+			host.Started += HandleStarted;
+			host.Stopped += HandleStopped;
+
+			// При закрывание формы удаляем хост и конфигурацию
+			this.FormClosing += HandleFormClosing;
+        }
+
+		/// <summary>
+		/// Выполняется при начале работы хоста
+		/// </summary>
+		/// <param name="sender">Sender.</param>
+		/// <param name="e">E.</param>
+        void HandleStarted (object sender, EventArgs e)
+        {
+			startStopButton.Text = "Stop";
+			progressBar.Value = 1;
+			photoCheckBox.Enabled = false;
+			gpsCheckBox.Enabled = false;
+			georadarCheckBox.Enabled = false;
+			tabPageBuffer.Add(tabControl.TabPages[2]);
+			tabControl.TabPages.Remove(tabControl.TabPages[2]);
+			tabPageBuffer.Add(tabControl.TabPages[1]);
+			tabControl.TabPages.Remove(tabControl.TabPages[1]);
+        }
+
+		/// <summary>
+		/// Выполняется когда хост заканчивает работу
+		/// </summary>
+		/// <param name="sender">Sender.</param>
+		/// <param name="e">E.</param>
+		void HandleStopped (object sender, EventArgs e)
+		{
+			startStopButton.Text = "Start";
+			progressBar.Value = 0;
+			photoCheckBox.Enabled = true;
+			gpsCheckBox.Enabled = true;
+			georadarCheckBox.Enabled = true;
+			tabControl.TabPages.Add(tabPageBuffer[1]);
+			tabControl.TabPages.Add(tabPageBuffer[0]);
+			tabPageBuffer.Clear();
+		}
+
+        void HandleFormClosing (object sender, FormClosingEventArgs e)
+        {
+			host.Dispose ();
+			conf.Dispose ();
         }
 
         void HandleOutputPending (string displayMe)
@@ -57,36 +104,15 @@ namespace GUI
         //start/stop button reaction
         private void startStopButton_Click(object sender, EventArgs e)
         {
-            if (progressBar.Value == 0)
-            {   //starting process
-                startStopButton.Text = "Stop";
-                progressBar.Value = 1;
-                photoCheckBox.Enabled = false;
-                gpsCheckBox.Enabled = false;
-                georadarCheckBox.Enabled = false;
-                tabPageBuffer.Add(tabControl.TabPages[2]);
-                tabControl.TabPages.Remove(tabControl.TabPages[2]);
-                tabPageBuffer.Add(tabControl.TabPages[1]);
-                tabControl.TabPages.Remove(tabControl.TabPages[1]);
+            if (host.IsRunning) {   
+				// устанавливаем хост
+				host.Stop (); 
+
+            } else {   
 				// TODO: Заполнить conf с текущих настроек из формы
 				// GO! GO! GO! запускаме работа хоста
 				host.Init ();
 				host.Start ();
-            }
-            else
-            {   //ending process
-                startStopButton.Text = "Start";
-                progressBar.Value = 0;
-                photoCheckBox.Enabled = true;
-                gpsCheckBox.Enabled = true;
-                georadarCheckBox.Enabled = true;
-                tabControl.TabPages.Add(tabPageBuffer[1]);
-                tabControl.TabPages.Add(tabPageBuffer[0]);
-                tabPageBuffer.Clear();
-
-				// устанавливаем хост
-				host.Stop (); 
-				// TODO: Установит host при закрываением окна
             }
         }
         #region Publics
@@ -138,10 +164,10 @@ namespace GUI
         /// <param name="clear">по-умолчанию false, если true - очищает поле вывода</param>
         public void AddLog(string log, bool clear = false)
         {
-            if (clear)
+			if (clear)
 				logTextBox.Text = "";
 			else
-				logTextBox.AppendText (log + Environment.NewLine);
+				logTextBox.AppendText (String.Format ("[{0}] {1}{2}", DateTime.Now.ToString ("HH:mm:ss.fff"), log, Environment.NewLine));
 
 			// scroll to bottom
 			logTextBox.SelectionStart = logTextBox.Text.Length;
