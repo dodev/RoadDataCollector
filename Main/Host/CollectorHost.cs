@@ -12,11 +12,11 @@ namespace Host
 {
 	public class CollectorHost : IDisposable
     {
-		IDBConnection db;
-		Thread dbThread;
-		Queue<IQuery> dbQueue;
-		List<IDevice> devices;
+		DBShell[] dbShells;
+		Thread[] dbThreads;
+		IDevice[] devices;
 		Thread devicesThread;
+		Thread[] devicesThreads;
 		ITimer timer;
 		EventWaitHandle timerSignal;
 		EventWaitHandle queriesReadySignal;
@@ -44,36 +44,56 @@ namespace Host
 			try {
 				OnInitializing ();
 
-				// настраиваем БД
-				var dbConf = config.GetItem ("db_conf") as DBConfiguration;
-				if (dbConf == null)
-					throw new Exception ("'db_conf' item coulnd't be found in the configuration");
-
-				var dbFactory = Activator.CreateInstance (GetType (dbConf.Assembly, dbConf.Namespace, dbConf.FactoryType)) as IDBFactory;
-				dbFactory.InitDBLayer (dbConf);
-				db = dbFactory.CreateConnection ();
-				dbThread = new Thread (new ThreadStart (HandleDBRequest));
-				// и очередь БД
-				var capacity = config.GetItem ("queue_capacity");
-				if (capacity == null)
-					throw new Exception ("queue_capacity item couldn't be found in the configuration");
-				dbQueue = new Queue<IQuery> ((int)capacity);
-
 				// список устройств
 				var devConfList = config.GetItem ("dev_conf_list") as DeviceConfiguration[];
 				if (devConfList == null)
 					throw new Exception ("'dev_conf_list' couldn't be found in the configuration");
-				devices = new List<IDevice> (devConfList.Length);
-				foreach (DeviceConfiguration devConf in devConfList) {
-					var dev = Activator.CreateInstance (GetType (devConf.Assembly, devConf.Namespace, devConf.DeviceType)) as IDevice;
+				devices = new IDevice[devConfList.Length];
+				devicesThreads = new Thread[devConfList.Length];
+				//foreach (DeviceConfiguration devConf in devConfList) {
+				for (int x = 0; x < devConfList.Length; x++) {
+					var dev = Activator.CreateInstance (GetType (devConfList[x].Assembly, devConfList[x].Namespace, devConfList[x].DeviceType)) as IDevice;
 					if (dev == null)
-						throw new Exception ("Could not create device with id " + devConf.ID);
-					var adapter = Activator.CreateInstance (GetType (devConf.Assembly, devConf.Namespace, dbFactory.GetAdapterTypeName (devConf.ID))) as IStorageAdapter;
-					if (adapter == null)
-						throw new Exception ("Adapter for device with id '" + dev.ID + "' could not be found!");
-					dev.Init (devConf.ID, adapter);
-					devices.Add (dev);
+						throw new Exception ("Could not create device with id " + devConfList[x].ID);
+					//var adapter = Activator.CreateInstance (GetType (devConf.Assembly, devConf.Namespace, dbFactory.GetAdapterTypeName (devConf.ID))) as IStorageAdapter;
+					//if (adapter == null)
+					//	throw new Exception ("Adapter for device with id '" + dev.ID + "' could not be found!");
+					dev.Init (devConfList[x].ID/*, adapter*/);
+					devices[x] = dev;
+					devicesThreads [x] = new Thread (new ThreadStart (CollectDeviceInfo));
 				}
+
+				// настраиваем БД
+				var dbConf = config.GetItem ("db_conf") as DBConfiguration [];
+				if (dbConf == null)
+					throw new Exception ("'db_conf' item coulnd't be found in the configuration");
+				var qcapacity = config.GetItem ("queue_capacity");
+				if (qcapacity == null)
+					throw new Exception ("queue_capacity item couldn't be found in the configuration");
+
+				dbShells = new DBShell [dbConf.Length];
+				dbThreads = new Thread [dbConf.Length];
+				for (int i = 0; i < dbConf.Length; i ++) {
+					var dbFactory = Activator.CreateInstance (GetType (dbConf[i].Assembly, dbConf[i].Namespace, dbConf[i].FactoryType)) as IDBFactory;
+					dbFactory.InitDBLayer (dbConf[i]);
+					dbThreads [i] = new Thread (new ParameterizedThreadStart (HandleDBRequest));
+					dbShells [i] = new DBShell (dbFactory.CreateConnection (), (int)qcapacity, new OutputDelegate (OnOutputPending));
+					foreach (DeviceConfiguration devConf in devConfList) {
+						var adapter = Activator.CreateInstance (GetType (devConf.Assembly, devConf.Namespace, dbFactory.GetAdapterTypeName (devConf.ID))) as IStorageAdapter;
+						dbShells [i].AddAdapter (devConf.ID, adapter);
+					}
+				}
+				//var dbFactory = Activator.CreateInstance (GetType (dbConf.Assembly, dbConf.Namespace, dbConf.FactoryType)) as IDBFactory;
+				//dbFactory.InitDBLayer (dbConf);
+				//db = dbFactory.CreateConnection ();
+				//dbThread = new Thread (new ThreadStart (HandleDBRequest));
+				// и очередь БД
+				//var capacity = config.GetItem ("queue_capacity");
+				//if (capacity == null)
+				//	throw new Exception ("queue_capacity item couldn't be found in the configuration");
+				//dbQueue = new Queue<IQuery> ((int)capacity);
+
+
 				devicesThread = new Thread (new ThreadStart (CollectDeviceInfo));
 
 				// настройки таймера
@@ -115,17 +135,15 @@ namespace Host
 		/// <summary>
 		/// Ждет запросы к БД в отдельном потоке
 		/// </summary>
-		void HandleDBRequest ()
+		void HandleDBRequest (object param)
 		{
-			if (db == null)
+			var dbShell = param as DBShell;
+			if (dbShell == null)
 				throw new Exception ("DB configuration or connection object not available");
 
 			// связываемся с БД
-			db.Connect ();
+			dbShell.Connect ();
 			OnOutputPending ("Successfully connected to DB"); 
-
-			int count;
-			IQuery queryBuf;
 
 			// бесконечный цикл обработки запросов
 			for (;;) {
@@ -135,7 +153,7 @@ namespace Host
 				try {
 
 					// выполняем все запросы в очереди
-					do {
+				/*	do {
 						queryBuf = null;
 						// вытаскиваем первого запроса из очереди
 						lock (dbQueue) {
@@ -161,6 +179,8 @@ namespace Host
 							count = dbQueue.Count;
 						}
 					} while (count > 0);
+*/
+					dbShell.ExecutePendingQueries ();
 
 				} catch (Exception ex) {
 					OnOutputPending (ex.Message);
@@ -177,7 +197,7 @@ namespace Host
 		void CollectDeviceInfo ()
 		{
 			object buf;
-			IQuery queryBuf;
+			//IQuery queryBuf;
 
 			for (;;) {
 				// ждем следущего сигнала
@@ -192,11 +212,15 @@ namespace Host
 						buf = dev.GetData ();
 						if (buf != null) {
 							// подготовливаем для БД
-							queryBuf = dev.Adapter.PrepareQuery (buf);
+							//queryBuf = dev.Adapter.PrepareQuery (buf);
 							// добавляем в очереди запросов
-							lock (dbQueue) {
-								dbQueue.Enqueue (queryBuf);
-							}
+							//lock (dbQueue) {
+							//	dbQueue.Enqueue (queryBuf);
+							//}
+
+							foreach (DBShell dbShell in dbShells)
+								dbShell.EnqueueQueryFrom (dev.ID, buf);
+
 							// уведомить поток БД что есть запрос на выполнение
 							queriesReadySignal.Set ();
 						}
@@ -208,6 +232,21 @@ namespace Host
 
 				// выключаем сигнал
 				timerSignal.Reset ();
+			}
+		}
+
+		void StartDBThreads ()
+		{
+			for (int i = 0; i < dbShells.Length; i ++)
+				dbThreads [i].Start (dbShells [i]);
+		}
+
+		void StopDBThreadsAndDisconnect ()
+		{
+			for (int i = 0; i < dbShells.Length; i ++) {
+				dbThreads [i].Abort ();
+				dbThreads [i].Join ();
+				dbShells [i].Disconnect ();
 			}
 		}
 
@@ -226,7 +265,8 @@ namespace Host
 				timer.Init (timerSignal);
 				timer.Start ();
 				devicesThread.Start ();
-				dbThread.Start ();
+				//dbThread.Start ();
+				StartDBThreads ();
 				isRunning = true;
 
 				OnStarted ();
@@ -253,9 +293,10 @@ namespace Host
 				devicesThread.Abort ();
 				devicesThread.Join ();
 				OnOutputPending ("Devices stopped");
-				dbThread.Abort ();
-				dbThread.Join ();
-				db.Disconnect ();
+				//dbThread.Abort ();
+				//dbThread.Join ();
+				//db.Disconnect ();
+				StopDBThreadsAndDisconnect ();
 				OnOutputPending ("Database communication stopped");
 
 				OnStopped ();
@@ -343,7 +384,9 @@ namespace Host
 				Stop ();
 
 			// даем все уборщику
-			db.Dispose ();
+			foreach (DBShell dbs in dbShells)
+				dbs.Disconnect ();
+
 			queriesReadySignal.Dispose ();
 			timerSignal.Dispose ();
 			isDisposing = true;
@@ -352,4 +395,6 @@ namespace Host
 		#endregion
 
     }
+
+	public delegate void OutputDelegate (string message);
 }

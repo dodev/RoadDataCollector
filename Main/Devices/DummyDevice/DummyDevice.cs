@@ -9,7 +9,6 @@ namespace Devices
 	{
 		// имя устройства в конфиг файле
 		string name;
-		IStorageAdapter adapter;
 		Random rand;
 
 		/// <summary>
@@ -35,10 +34,9 @@ namespace Devices
 		/// </summary>
 		/// <param name="name">Name.</param>
 		/// <param name="adapter">Adapter.</param>
-		public void Init (string name, IStorageAdapter adapter)
+		public void Init (string name)
 		{
 			this.name = name;
-			this.adapter = adapter;
 		}
 
 		/// <summary>
@@ -50,10 +48,6 @@ namespace Devices
 		public object GetData ()
 		{
 			return new DummyDeviceData (rand.Next (), rand.Next (), rand.Next ());
-		}
-
-		public IStorageAdapter Adapter {
-			get { return adapter; }
 		}
 
 		#endregion
