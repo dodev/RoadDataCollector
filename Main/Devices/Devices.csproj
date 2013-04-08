@@ -36,6 +36,7 @@
     <Compile Include="DummyDevice\DummyDeviceData.cs" />
     <Compile Include="DummyDevice\DummyDeviceDummyDBAdapter.cs" />
     <Compile Include="IStorageAdapter.cs" />
+    <Compile Include="DummyDevice\DummyDeviceSecondDBAdapter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -16,11 +16,16 @@ namespace Configuration
 		public DummyConfigurator ()
 		{
 			IDictionary<string, string> dummyDBAdapters = new Dictionary<string, string> () {{"dummy_device", "DummyDeviceDummyDBAdapter"}};
+			IDictionary<string, string> secondDBAdapters = new Dictionary<string, string> () {{"dummy_device", "DummyDeviceSecondDBAdapter"}};
 			items = new Dictionary<string, object> ()
 			{
 				{"timer_time_interval_ms", 1000},
 				{"queue_capacity", 20},
-				{"db_conf", new DBConfiguration [] {new DBConfiguration ("test", "dummy_db", "dodo", "dodo", "DBConnection", "DBConnection", "DummyDBFactory", dummyDBAdapters)}},
+				{"db_conf", new DBConfiguration [] {
+						new DBConfiguration ("test", "dummy_db", "dodo", "dodo", "DBConnection", "DBConnection", "DummyDBFactory", dummyDBAdapters),
+						new DBConfiguration ("test", "dummy_db", "dodo", "dodo", "DBConnection", "DBConnection", "SecondDBFactory", secondDBAdapters)
+					}
+				},
 				{"dev_conf_list", new DeviceConfiguration[] {new DeviceConfiguration("dummy_device", "Пробное устройство", "Devices", "Devices", "DummyDevice")}}
 			};
 		}
