@@ -37,6 +37,10 @@
     <Compile Include="DummyDevice\DummyDeviceDummyDBAdapter.cs" />
     <Compile Include="IStorageAdapter.cs" />
     <Compile Include="DummyDevice\DummyDeviceSecondDBAdapter.cs" />
+    <Compile Include="ClockDevice\ClockDevice.cs" />
+    <Compile Include="ClockDevice\ClockDeviceData.cs" />
+    <Compile Include="ClockDevice\ClockDeviceDummyDBAdapter.cs" />
+    <Compile Include="ClockDevice\ClockDeviceSecondDBAdapter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -47,5 +51,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DummyDevice\" />
+    <Folder Include="ClockDevice\" />
   </ItemGroup>
 </Project>

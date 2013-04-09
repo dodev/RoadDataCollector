@@ -15,8 +15,14 @@ namespace Configuration
 
 		public DummyConfigurator ()
 		{
-			IDictionary<string, string> dummyDBAdapters = new Dictionary<string, string> () {{"dummy_device", "DummyDeviceDummyDBAdapter"}};
-			IDictionary<string, string> secondDBAdapters = new Dictionary<string, string> () {{"dummy_device", "DummyDeviceSecondDBAdapter"}};
+			IDictionary<string, string> dummyDBAdapters = new Dictionary<string, string> () {
+				{"dummy_device", "DummyDeviceDummyDBAdapter"},
+				{"clock_device", "ClockDeviceDummyDBAdapter"}
+			};
+			IDictionary<string, string> secondDBAdapters = new Dictionary<string, string> () {
+				{"dummy_device", "DummyDeviceSecondDBAdapter"},
+				{"clock_device", "ClockDeviceSecondDBAdapter"}
+			};
 			items = new Dictionary<string, object> ()
 			{
 				{"timer_time_interval_ms", 1000},
@@ -26,7 +32,11 @@ namespace Configuration
 						new DBConfiguration ("test", "dummy_db", "dodo", "dodo", "DBConnection", "DBConnection", "SecondDBFactory", secondDBAdapters)
 					}
 				},
-				{"dev_conf_list", new DeviceConfiguration[] {new DeviceConfiguration("dummy_device", "Пробное устройство", "Devices", "Devices", "DummyDevice")}}
+				{"dev_conf_list", new DeviceConfiguration [] {
+						new DeviceConfiguration("dummy_device", "Пробное устройство", "Devices", "Devices", "DummyDevice"),
+						new DeviceConfiguration("clock_device", "Часы", "Devices", "Devices", "ClockDevice")
+					}
+				}
 			};
 		}
 
