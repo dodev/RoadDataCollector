@@ -12,18 +12,37 @@ namespace Host
 {
 	public class CollectorHost : IDisposable
     {
+		#region fields
+
+		// оболочки БД, которые содержат в себе очереди
+		// и контрулируют доступ до них
 		DBShell[] dbShells;
-		Thread[] dbThreads;
+
+		// масив устройств
 		IDevice[] devices;
-		//Thread devicesThread;
+
+		// масивы потоков
 		Thread[] devicesThreads;
+		Thread[] dbThreads;
+
+		// таймер
 		ITimer timer;
+
+		// события для синхронизации потоков
 		EventWaitHandle timerSignal;
 		EventWaitHandle queriesReadySignal;
+
+		// ее величество, конфигурация
 		IConfigurator config;
+
+		// флажки для определения состояния хоста
 		bool isInitialized;
 		bool isRunning;
 		bool isDisposing;
+
+		#endregion fields
+
+		#region initialization
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Host.CollectorHost"/> class.
@@ -37,6 +56,9 @@ namespace Host
 			isDisposing = false;
 		}
 
+		/// <summary>
+		/// Init this instance.
+		/// </summary>
 		public void Init ()
 		{
 			if (isInitialized)
@@ -44,26 +66,30 @@ namespace Host
 			try {
 				OnInitializing ();
 
-				// список устройств
+				// инициализируем устройств
+
+				// загружаем настройки из конфигурации
 				var devConfList = config.GetItem ("dev_conf_list") as DeviceConfiguration[];
 				if (devConfList == null)
 					throw new Exception ("'dev_conf_list' couldn't be found in the configuration");
+
+				// создеам масивов устройств и потоков
 				devices = new IDevice[devConfList.Length];
 				devicesThreads = new Thread[devConfList.Length];
-				//foreach (DeviceConfiguration devConf in devConfList) {
+
+				// инициализируем устройств и потоков
 				for (int x = 0; x < devConfList.Length; x++) {
 					var dev = Activator.CreateInstance (GetType (devConfList[x].Assembly, devConfList[x].Namespace, devConfList[x].DeviceType)) as IDevice;
 					if (dev == null)
 						throw new Exception ("Could not create device with id " + devConfList[x].ID);
-					//var adapter = Activator.CreateInstance (GetType (devConf.Assembly, devConf.Namespace, dbFactory.GetAdapterTypeName (devConf.ID))) as IStorageAdapter;
-					//if (adapter == null)
-					//	throw new Exception ("Adapter for device with id '" + dev.ID + "' could not be found!");
-					dev.Init (devConfList[x].ID/*, adapter*/);
+					dev.Init (devConfList[x].ID);
 					devices[x] = dev;
 					devicesThreads [x] = new Thread (new ParameterizedThreadStart (CollectDeviceInfo));
 				}
 
-				// настраиваем БД
+				// инициализуруем БД оболочек
+
+				// загружаем настройки из конфигурации
 				var dbConf = config.GetItem ("db_conf") as DBConfiguration [];
 				if (dbConf == null)
 					throw new Exception ("'db_conf' item coulnd't be found in the configuration");
@@ -71,30 +97,25 @@ namespace Host
 				if (qcapacity == null)
 					throw new Exception ("queue_capacity item couldn't be found in the configuration");
 
+				// создаем масивов оболочек и потоков
 				dbShells = new DBShell [dbConf.Length];
 				dbThreads = new Thread [dbConf.Length];
+
+				// и инициализурем их
 				for (int i = 0; i < dbConf.Length; i ++) {
 					var dbFactory = Activator.CreateInstance (GetType (dbConf[i].Assembly, dbConf[i].Namespace, dbConf[i].FactoryType)) as IDBFactory;
+					if (dbFactory == null)
+						throw new Exception  ("Could not load DB");
+
 					dbFactory.InitDBLayer (dbConf[i]);
-					dbThreads [i] = new Thread (new ParameterizedThreadStart (HandleDBRequest));
 					dbShells [i] = new DBShell (dbFactory.CreateConnection (), (int)qcapacity, new OutputDelegate (OnOutputPending));
 					foreach (DeviceConfiguration devConf in devConfList) {
 						var adapter = Activator.CreateInstance (GetType (devConf.Assembly, devConf.Namespace, dbFactory.GetAdapterTypeName (devConf.ID))) as IStorageAdapter;
 						dbShells [i].AddAdapter (devConf.ID, adapter);
 					}
+
+					dbThreads [i] = new Thread (new ParameterizedThreadStart (HandleDBRequest));
 				}
-				//var dbFactory = Activator.CreateInstance (GetType (dbConf.Assembly, dbConf.Namespace, dbConf.FactoryType)) as IDBFactory;
-				//dbFactory.InitDBLayer (dbConf);
-				//db = dbFactory.CreateConnection ();
-				//dbThread = new Thread (new ThreadStart (HandleDBRequest));
-				// и очередь БД
-				//var capacity = config.GetItem ("queue_capacity");
-				//if (capacity == null)
-				//	throw new Exception ("queue_capacity item couldn't be found in the configuration");
-				//dbQueue = new Queue<IQuery> ((int)capacity);
-
-
-				//devicesThread = new Thread (new ThreadStart (CollectDeviceInfo));
 
 				// настройки таймера
 				// TODO: add mechanism for changing timers
@@ -131,6 +152,9 @@ namespace Host
 			return Type.GetType (String.Format ("{0}.{1}, {2}", nmspace, type, assembly));
 		}
 
+		#endregion initialization
+
+		#region workers
 
 		/// <summary>
 		/// Ждет запросы к БД в отдельном потоке
@@ -138,8 +162,10 @@ namespace Host
 		void HandleDBRequest (object param)
 		{
 			var dbShell = param as DBShell;
-			if (dbShell == null)
-				throw new Exception ("DB configuration or connection object not available");
+			if (dbShell == null) {
+				OnOutputPending ("DB configuration or connection object not available");
+				Stop ();
+			}
 
 			// связываемся с БД
 			dbShell.Connect ();
@@ -153,33 +179,6 @@ namespace Host
 				try {
 
 					// выполняем все запросы в очереди
-				/*	do {
-						queryBuf = null;
-						// вытаскиваем первого запроса из очереди
-						lock (dbQueue) {
-							if (dbQueue.Count > 0)
-								queryBuf = dbQueue.Dequeue ();
-						}
-
-						// выполняем запроса
-						// предполагаем, что это будет медлено выполнятся
-						if (queryBuf != null) {
-							if (db.ExecuteQuery (queryBuf)) {
-								// query прошло, дать потребителю знать 
-								OnOutputPending ("Executed query #0x"+queryBuf.GetHashCode ().ToString ("X"));
-							} else {
-								// если запрос не выполнился, покажи сообщение из СУБД
-								OnOutputPending (db.GetLastResponse ());
-							}
-						}
-
-						// так как прошло много времени с момента выполнения запроса
-						// блокируем доступ к dbQueu и проверяем оставшихся элементов в очереди
-						lock (dbQueue) {
-							count = dbQueue.Count;
-						}
-					} while (count > 0);
-*/
 					dbShell.ExecutePendingQueries ();
 
 				} catch (Exception ex) {
@@ -197,39 +196,31 @@ namespace Host
 		void CollectDeviceInfo (object param)
 		{
 			var dev = param as IDevice;
-			if (dev == null)
-				throw new Exception ("Device could not be loaded in external thread!");
+			if (dev == null) {
+				OnOutputPending ("Device could not be loaded in external thread!");
+				Stop ();
+			}
 
 			object buf;
-			//IQuery queryBuf;
 
 			for (;;) {
 				// ждем следущего сигнала
 				timerSignal.WaitOne ();
 
 				try {
-					// собираем инфу из устройств
-					//foreach (IDevice dev in devices) {
+					// собиреам инфу и проверяем
+					buf = dev.GetData ();
+					if (buf != null) {
 						// уведомляем потребителю
-						OnOutputPending ("Collecting data from " + dev.ID); 
-						// собиреам и проверяем
-						buf = dev.GetData ();
-						if (buf != null) {
-							// подготовливаем для БД
-							//queryBuf = dev.Adapter.PrepareQuery (buf);
-							// добавляем в очереди запросов
-							//lock (dbQueue) {
-							//	dbQueue.Enqueue (queryBuf);
-							//}
+						OnOutputPending ("Collected data from device " + dev.ID); 
 
-							foreach (DBShell dbShell in dbShells)
-								dbShell.EnqueueQueryFrom (dev.ID, buf);
+						// отправляем запросы к каждой БД
+						foreach (DBShell dbShell in dbShells)
+							dbShell.EnqueueQueryFrom (dev.ID, buf);
 
-							// уведомить поток БД что есть запрос на выполнение
-							queriesReadySignal.Set ();
-						}
-					//}
-
+						// уведомить поток БД что есть запрос на выполнение
+						queriesReadySignal.Set ();
+					}
 				} catch (Exception ex) {
 					OnOutputPending (ex.Message);
 				}
@@ -238,6 +229,10 @@ namespace Host
 				timerSignal.Reset ();
 			}
 		}
+
+		#endregion workers
+
+		#region user_control
 
 		void StartDBThreads ()
 		{
@@ -330,12 +325,16 @@ namespace Host
 			get { return isRunning; }
 		}
 
+		#endregion user_control
+
 		#region Events
 
 		/// <summary>
 		/// Происходит когда есть информация для вывода
 		/// </summary>
 		public event OutputPendingDelegate OutputPending;
+
+		// стадии жизни хоста
 		public event EventHandler<EventArgs> Initializing;
 		public event EventHandler<EventArgs> Initialized;
 		public event EventHandler<EventArgs> Starting;
