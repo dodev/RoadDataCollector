@@ -118,11 +118,9 @@ namespace Host
 				}
 
 				// настройки таймера
-				// TODO: add mechanism for changing timers
-				var timeInterval = config.GetItem ("timer_time_interval_ms");
-				if (timeInterval == null)
-					throw new Exception ("'timer_time_interval_ms' couldn't be found in the configuration object");
-				timer = new TimeIntervalTimer ((int)timeInterval);
+				timer = CreateTimer ();
+				if (timer == null)
+					throw new Exception ("Error initializing timer");
 
 				// событие для таймера
 				timerSignal = new ManualResetEvent (false);
@@ -150,6 +148,32 @@ namespace Host
 		Type GetType (string assembly, string nmspace, string type)
 		{
 			return Type.GetType (String.Format ("{0}.{1}, {2}", nmspace, type, assembly));
+		}
+
+		/// <summary>
+		/// Creates the timer.
+		/// </summary>
+		/// <returns>The timer.</returns>
+		ITimer CreateTimer ()
+		{
+			ITimer theTimer = null;
+
+			var type = config.GetItem ("timer_type") as String;
+			if (type == null)
+				throw new Exception ("Could not load item 'timer_type' from config");
+
+			if (type == "time") {
+				var timeInterval = config.GetItem ("timer_time_interval_ms");
+				if (timeInterval == null)
+					throw new Exception ("'timer_time_interval_ms' couldn't be found in the configuration object");
+
+				theTimer = new TimeIntervalTimer ((int)timeInterval);
+
+			} else if (type == "distance") {
+				throw new NotImplementedException ("Distance timer not implemented yet!");
+			}
+
+			return theTimer;
 		}
 
 		#endregion initialization

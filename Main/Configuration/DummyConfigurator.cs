@@ -25,6 +25,7 @@ namespace Configuration
 			};
 			items = new Dictionary<string, object> ()
 			{
+				{"timer_type", "time"},
 				{"timer_time_interval_ms", 1000},
 				{"queue_capacity", 20},
 				{"db_conf", new DBConfiguration [] {
