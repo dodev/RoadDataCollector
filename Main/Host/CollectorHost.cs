@@ -15,7 +15,7 @@ namespace Host
 		DBShell[] dbShells;
 		Thread[] dbThreads;
 		IDevice[] devices;
-		Thread devicesThread;
+		//Thread devicesThread;
 		Thread[] devicesThreads;
 		ITimer timer;
 		EventWaitHandle timerSignal;
@@ -60,7 +60,7 @@ namespace Host
 					//	throw new Exception ("Adapter for device with id '" + dev.ID + "' could not be found!");
 					dev.Init (devConfList[x].ID/*, adapter*/);
 					devices[x] = dev;
-					devicesThreads [x] = new Thread (new ThreadStart (CollectDeviceInfo));
+					devicesThreads [x] = new Thread (new ParameterizedThreadStart (CollectDeviceInfo));
 				}
 
 				// настраиваем БД
@@ -94,7 +94,7 @@ namespace Host
 				//dbQueue = new Queue<IQuery> ((int)capacity);
 
 
-				devicesThread = new Thread (new ThreadStart (CollectDeviceInfo));
+				//devicesThread = new Thread (new ThreadStart (CollectDeviceInfo));
 
 				// настройки таймера
 				// TODO: add mechanism for changing timers
@@ -194,8 +194,12 @@ namespace Host
 		/// <summary>
 		/// Собирает информацию с устройств
 		/// </summary>
-		void CollectDeviceInfo ()
+		void CollectDeviceInfo (object param)
 		{
+			var dev = param as IDevice;
+			if (dev == null)
+				throw new Exception ("Device could not be loaded in external thread!");
+
 			object buf;
 			//IQuery queryBuf;
 
@@ -205,7 +209,7 @@ namespace Host
 
 				try {
 					// собираем инфу из устройств
-					foreach (IDevice dev in devices) {
+					//foreach (IDevice dev in devices) {
 						// уведомляем потребителю
 						OnOutputPending ("Collecting data from " + dev.ID); 
 						// собиреам и проверяем
@@ -224,7 +228,7 @@ namespace Host
 							// уведомить поток БД что есть запрос на выполнение
 							queriesReadySignal.Set ();
 						}
-					}
+					//}
 
 				} catch (Exception ex) {
 					OnOutputPending (ex.Message);
@@ -250,6 +254,20 @@ namespace Host
 			}
 		}
 
+		void StartDevicesThreads ()
+		{
+			for (int i = 0; i < devices.Length; i ++)
+				devicesThreads [i].Start (devices [i]);
+		}
+
+		void StopDevicesThreads ()
+		{
+			for (int i = 0; i < devices.Length; i ++) {
+				devicesThreads [i].Abort ();
+				devicesThreads [i].Join ();
+			}
+		}
+
 		/// <summary>
 		/// Начинает снятия информации с устройств и запис в БД
 		/// </summary>
@@ -261,12 +279,13 @@ namespace Host
 			try {
 				OnStarting ();
 
-				OnOutputPending ("Starting devices...");
+				StartDBThreads ();
+				OnOutputPending ("Database communication started.");
+				StartDevicesThreads ();
+				OnOutputPending ("Devices started.");
 				timer.Init (timerSignal);
 				timer.Start ();
-				devicesThread.Start ();
-				//dbThread.Start ();
-				StartDBThreads ();
+				OnOutputPending ("Timer started.");
 				isRunning = true;
 
 				OnStarted ();
@@ -288,16 +307,12 @@ namespace Host
 			try {
 				OnStopping ();
 
-				OnOutputPending ("Stopping host...");
 				timer.Stop ();
-				devicesThread.Abort ();
-				devicesThread.Join ();
-				OnOutputPending ("Devices stopped");
-				//dbThread.Abort ();
-				//dbThread.Join ();
-				//db.Disconnect ();
+				OnOutputPending ("Timer stopped.");
+				StopDevicesThreads ();
+				OnOutputPending ("Devices stopped.");
 				StopDBThreadsAndDisconnect ();
-				OnOutputPending ("Database communication stopped");
+				OnOutputPending ("Database communication stopped.");
 
 				OnStopped ();
 			
