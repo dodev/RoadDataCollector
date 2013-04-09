@@ -37,10 +37,14 @@
     <Compile Include="DummyDBConnection\DummyDBFactory.cs" />
     <Compile Include="DummyDBConnection\DummyDBConnection.cs" />
     <Compile Include="DummyDBConnection\DummyQuery.cs" />
+    <Compile Include="SecondDB\SecondDBConnection.cs" />
+    <Compile Include="SecondDB\SecondDBFactory.cs" />
+    <Compile Include="SecondDB\SecondDBQuery.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="DummyDBConnection\" />
+    <Folder Include="SecondDB\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Configuration\Configuration.csproj">

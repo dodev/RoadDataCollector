@@ -11,22 +11,15 @@ namespace Devices
 		string ID { get; }
 
 		/// <summary>
-		/// Инициализирует устройство с имя из конфиг файла и адаптер для подготовки данных для вставления в БД.
+		/// Инициализирует устройство с имя из конфиг файла.
 		/// </summary>
 		/// <param name="name">Name.</param>
-		/// <param name="adapter">Adapter.</param>
-        void Init (string name, IStorageAdapter adapter);
+        void Init (string name);
 
 		/// <summary>
 		/// Снимает данных с устройва
 		/// </summary>
 		/// <returns>The data.</returns>
         object GetData ();
-
-		/// <summary>
-		/// Gets the adapter.
-		/// </summary>
-		/// <value>The adapter.</value>
-		IStorageAdapter Adapter {get;}
     }
 }
