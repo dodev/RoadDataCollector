@@ -1,5 +1,6 @@
-using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Xml.Serialization;
 
 namespace Configuration
 {
@@ -8,6 +9,12 @@ namespace Configuration
 	/// </summary>
 	public class DBConfiguration
 	{
+		/// <summary>
+		/// Нужно для работы сериализации настроек.
+		/// </summary>
+		private DBConfiguration()
+		{ }
+
 		public DBConfiguration (string address, string name, string user, string password, string assembly, string nmspace, string factoryType, IDictionary<string, string> adaptersDict)
 		{
 			Address = address;
@@ -35,7 +42,27 @@ namespace Configuration
 		public string Namespace { get; set; }
 		public string FactoryType { get; set; }
 
+		/// <summary>
+		/// Нужно для работы XML - сериализации.
+		/// Возвращает словарь, сериализованный в строку в формате XML.
+		/// </summary>
+		[XmlElement("ApprovedAdapters")]
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public RawString SerializedAdapters
+		{
+			get
+			{
+				return ApprovedAdapters.Serialize();
+			}
+			set
+			{
+				ApprovedAdapters = value.Deserialize<IDictionary<string, string>>();
+			}
+		}
+
 		// словарь, с структурой "имя-устройства => имя-класса-адаптера-для-этой-бд"
+		[XmlIgnore]
 		public IDictionary<string, string> ApprovedAdapters { get; set; }
 	}
 }

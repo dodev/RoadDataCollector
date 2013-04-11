@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 
-/// <summary>
-/// Примерная реализация класса конфигуратора.
-/// Он должен имет тоже самый интерфейс, но загружать конфигурацию из xml или json файла
-/// и представлят ее через тоже самой структуры, т.е. int, string, DBConfiguration, DeviceConfiguration..
-/// </summary>
+
 namespace Configuration
 {
+	/// <summary>
+	/// Примерная реализация класса конфигуратора.
+	/// Он должен имет тоже самый интерфейс, но загружать конфигурацию из xml или json файла
+	/// и представлят ее через тоже самой структуры, т.е. int, string, DBConfiguration, DeviceConfiguration..
+	/// </summary>
 	public class DummyConfigurator : IConfigurator
 	{
 		// словарь с конфигурационными значениями

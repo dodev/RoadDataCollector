@@ -17,9 +17,15 @@ namespace Devices
 			this.name = name;
 		}
 
+		public void Init(string name)
+		{
+			Init(name, null);
+		}
+
 		public object GetData ()
 		{
 			// Вот здесь можно кодит :)
+			throw new NotImplementedException();
 		}
 
 		public string ID {
