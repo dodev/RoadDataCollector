@@ -38,8 +38,6 @@
     <Compile Include="DBConfiguration.cs" />
     <Compile Include="DeviceConfiguration.cs" />
     <Compile Include="IConfigurator.cs" />
-    <Compile Include="RawString.cs" />
-    <Compile Include="SerializationExtensions.cs" />
     <Compile Include="XmlConfigurator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

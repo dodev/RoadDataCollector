@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Xml.Serialization;
+using System.Linq;
 
 namespace Configuration
 {
@@ -46,18 +47,24 @@ namespace Configuration
 		/// Нужно для работы XML - сериализации.
 		/// Возвращает словарь, сериализованный в строку в формате XML.
 		/// </summary>
-		[XmlElement("ApprovedAdapters")]
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public RawString SerializedAdapters
+		public string[] SerializedAdapters
 		{
 			get
 			{
-				return ApprovedAdapters.Serialize();
+				var values =
+					ApprovedAdapters.Aggregate(new List<string>(), (arr, kvp) => { arr.Add(kvp.Key); arr.Add(kvp.Value); return arr; }).ToArray();
+				return values;
 			}
 			set
 			{
-				ApprovedAdapters = value.Deserialize<IDictionary<string, string>>();
+				ApprovedAdapters = new Dictionary<string, string>();
+
+				for (int i = 0; i < value.Length; i+= 2)
+				{
+					ApprovedAdapters.Add(value[i], value[i + 1]);
+				}
 			}
 		}
 
