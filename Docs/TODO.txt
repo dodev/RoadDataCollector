@@ -1,0 +1,2 @@
+Update class diagram
+Check methods used in the instructional

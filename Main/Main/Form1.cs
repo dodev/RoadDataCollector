@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-
+using GUI.Properties;
 using Host;
 using Configuration;
 
@@ -19,6 +19,10 @@ namespace GUI
         //Form initialize
         public Form1()
         {
+			// TODO: Заменить DummyConfigurator на строку ниже после создания работоспособного файла конфигурации
+			// Путь к файлу конфигурации задается в settings проекта GUI
+			// conf = new XmlConfigurator(Settings.Default.ConfigurationFilePath);
+
 			conf = new DummyConfigurator ();
 			conf.Load (); // TODO: показать информацию о том что сейчас идет загрузка конфигурации
 
