@@ -436,3 +436,4 @@ namespace Host
 
 	public delegate void OutputDelegate (string message);
 }
+// проверка процесса
