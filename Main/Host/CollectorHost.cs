@@ -71,7 +71,7 @@ namespace Host
 				// загружаем настройки из конфигурации
 				var devConfList = config.GetItem ("dev_conf_list") as DeviceConfiguration[];
 				if (devConfList == null)
-					throw new Exception ("'dev_conf_list' couldn't be found in the configuration");
+                    throw new Exception("'dev_conf_list' couldn't be found in the configuration");// 'dev_conf_list' не найдена в конфигурациях
 
 				// создеам масивов устройств и потоков
 				devices = new IDevice[devConfList.Length];
@@ -81,7 +81,7 @@ namespace Host
 				for (int x = 0; x < devConfList.Length; x++) {
 					var dev = Activator.CreateInstance (GetType (devConfList[x].Assembly, devConfList[x].Namespace, devConfList[x].DeviceType)) as IDevice;
 					if (dev == null)
-						throw new Exception ("Could not create device with id " + devConfList[x].ID);
+						throw new Exception ("Could not create device with id " + devConfList[x].ID);//Невозможно создать устройство с идентификатором
 					dev.Init (devConfList[x].ID);
 					devices[x] = dev;
 					devicesThreads [x] = new Thread (new ParameterizedThreadStart (CollectDeviceInfo));
@@ -92,10 +92,10 @@ namespace Host
 				// загружаем настройки из конфигурации
 				var dbConf = config.GetItem ("db_conf") as DBConfiguration [];
 				if (dbConf == null)
-					throw new Exception ("'db_conf' item coulnd't be found in the configuration");
+					throw new Exception ("'db_conf' item coulnd't be found in the configuration");// - такого пункта в конфигурации не найдено
 				var qcapacity = config.GetItem ("queue_capacity");
 				if (qcapacity == null)
-					throw new Exception ("queue_capacity item couldn't be found in the configuration");
+                    throw new Exception("queue_capacity item couldn't be found in the configuration");//- такого пункта в конфигурации не найдено
 
 				// создаем масивов оболочек и потоков
 				dbShells = new DBShell [dbConf.Length];
@@ -105,7 +105,7 @@ namespace Host
 				for (int i = 0; i < dbConf.Length; i ++) {
 					var dbFactory = Activator.CreateInstance (GetType (dbConf[i].Assembly, dbConf[i].Namespace, dbConf[i].FactoryType)) as IDBFactory;
 					if (dbFactory == null)
-						throw new Exception  ("Could not load DB");
+						throw new Exception  ("Could not load DB");//База данных не может быть загружена
 
 					dbFactory.InitDBLayer (dbConf[i]);
 					dbShells [i] = new DBShell (dbFactory.CreateConnection (), (int)qcapacity, new OutputDelegate (OnOutputPending));
@@ -120,7 +120,7 @@ namespace Host
 				// настройки таймера
 				timer = CreateTimer ();
 				if (timer == null)
-					throw new Exception ("Error initializing timer");
+					throw new Exception ("Error initializing timer");//Ошибка инициализации таймера
 
 				// событие для таймера
 				timerSignal = new ManualResetEvent (false);
@@ -133,7 +133,7 @@ namespace Host
 				OnInitialized ();
 
 			} catch (Exception ex) {
-				OnOutputPending ("Error occured: " + ex.ToString ());
+				OnOutputPending ("Error occured: " + ex.ToString ());//Произошла ошибка
 				isInitialized = false;
 			}
 		}
@@ -160,17 +160,17 @@ namespace Host
 
 			var type = config.GetItem ("timer_type") as String;
 			if (type == null)
-				throw new Exception ("Could not load item 'timer_type' from config");
+				throw new Exception ("Could not load item 'timer_type' from config");//'timer_type' не может быть загружен из конфигураций
 
 			if (type == "time") {
 				var timeInterval = config.GetItem ("timer_time_interval_ms");
 				if (timeInterval == null)
-					throw new Exception ("'timer_time_interval_ms' couldn't be found in the configuration object");
+                    throw new Exception("'timer_time_interval_ms' couldn't be found in the configuration object");//'timer_time_interval_ms' не найден в конфигурационном объекте
 
 				theTimer = new TimeIntervalTimer ((int)timeInterval);
 
 			} else if (type == "distance") {
-				throw new NotImplementedException ("Distance timer not implemented yet!");
+				throw new NotImplementedException ("Distance timer not implemented yet!");//Счетчик расстояния еще не реализован
 			}
 
 			return theTimer;
@@ -187,13 +187,13 @@ namespace Host
 		{
 			var dbShell = param as DBShell;
 			if (dbShell == null) {
-				OnOutputPending ("DB configuration or connection object not available");
+				OnOutputPending ("DB configuration or connection object not available");//Конфигураций БЛ или соединение с объектом не доступно
 				Stop ();
 			}
 
 			// связываемся с БД
 			dbShell.Connect ();
-			OnOutputPending ("Successfully connected to DB"); 
+			OnOutputPending ("Successfully connected to DB"); //Соединение с БД удалось
 
 			// бесконечный цикл обработки запросов
 			for (;;) {
@@ -221,7 +221,7 @@ namespace Host
 		{
 			var dev = param as IDevice;
 			if (dev == null) {
-				OnOutputPending ("Device could not be loaded in external thread!");
+				OnOutputPending ("Device could not be loaded in external thread!");//Устройство не может быть загружено вне*
 				Stop ();
 			}
 
@@ -236,7 +236,7 @@ namespace Host
 					buf = dev.GetData ();
 					if (buf != null) {
 						// уведомляем потребителю
-						OnOutputPending ("Collected data from device " + dev.ID); 
+						OnOutputPending ("Collected data from device " + dev.ID); //Данные с устройства собраны
 
 						// отправляем запросы к каждой БД
 						foreach (DBShell dbShell in dbShells)
@@ -299,19 +299,19 @@ namespace Host
 				OnStarting ();
 
 				StartDBThreads ();
-				OnOutputPending ("Database communication started.");
+				OnOutputPending ("Database communication started.");//Взаимодействие с Базой Данных началось
 				StartDevicesThreads ();
-				OnOutputPending ("Devices started.");
+				OnOutputPending ("Devices started.");//Устройства запущены
 				timer.Init (timerSignal);
 				timer.Start ();
-				OnOutputPending ("Timer started.");
+				OnOutputPending ("Timer started.");//Таймер запущен
 				isRunning = true;
 
 				OnStarted ();
 
 			} catch (Exception ex) {
-				OnOutputPending ("Error occured while trying to start data collection: " + ex.Message);
-				OnOutputPending ("Terminating session.");
+				OnOutputPending ("Error occured while trying to start data collection: " + ex.Message);//Произошла ошибка при попытке запуска сбора данных
+				OnOutputPending ("Terminating session.");//Сессия прекращена
 				Stop ();
 			}
 		}
@@ -327,17 +327,17 @@ namespace Host
 				OnStopping ();
 
 				timer.Stop ();
-				OnOutputPending ("Timer stopped.");
+				OnOutputPending ("Timer stopped.");//Таймеры остановлены
 				StopDevicesThreads ();
-				OnOutputPending ("Devices stopped.");
+				OnOutputPending ("Devices stopped.");//Устройства отключены
 				StopDBThreadsAndDisconnect ();
-				OnOutputPending ("Database communication stopped.");
+				OnOutputPending ("Database communication stopped.");//Взаимодействие с Базой данных завершено
 
 				OnStopped ();
 			
 			} catch (Exception ex) {
-				OnOutputPending ("Error occured while trying to stop data collection: " + ex.Message);
-				OnOutputPending ("Terminating session.");
+				OnOutputPending ("Error occured while trying to stop data collection: " + ex.Message);//Произошла ошибка при  попытке остановить сбор данных
+				OnOutputPending ("Terminating session.");//Сессия прекращена
 			} finally {
 				// re-init on next run
 				isInitialized = false;
@@ -436,3 +436,4 @@ namespace Host
 
 	public delegate void OutputDelegate (string message);
 }
+// проверка процесса
