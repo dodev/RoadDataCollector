@@ -90,9 +90,9 @@ namespace Host
 				// инициализуруем БД оболочек
 
 				// загружаем настройки из конфигурации
-				var dbConf = config.GetItem ("db_conf") as DBConfiguration [];
+				var dbConf = config.GetItem ("db_conf_list") as DBConfiguration [];
 				if (dbConf == null)
-					throw new Exception ("'db_conf' item coulnd't be found in the configuration");// - такого пункта в конфигурации не найдено
+					throw new Exception ("'db_conf_list' item coulnd't be found in the configuration");// - такого пункта в конфигурации не найдено
 				var qcapacity = config.GetItem ("queue_capacity");
 				if (qcapacity == null)
                     throw new Exception("queue_capacity item couldn't be found in the configuration");//- такого пункта в конфигурации не найдено

@@ -13,6 +13,13 @@ namespace Configuration
 		public XmlConfigurator(string filePath)
 		{
 			_filePath = filePath;
+
+			// При отсутствии файла конфигурации он создается и заполняется настройками по умолчанию.
+			if (!File.Exists(_filePath))
+			{
+				_values = new DefaultConfiguration();
+				Save();
+			}
 		}
 
 		public void Dispose()
@@ -21,6 +28,7 @@ namespace Configuration
 		public void Load()
 		{
 			_values.Clear();
+
 			var document = XDocument.Load(_filePath);
 			foreach (var element in document.Root.Elements())
 			{
