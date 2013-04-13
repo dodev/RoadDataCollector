@@ -12,7 +12,7 @@ namespace Configuration
 		{
 			IDictionary<string, string> dummyDBAdapters = new Dictionary<string, string>() {
 				{"dummy_device", "DummyDeviceDummyDBAdapter"},
-				{"clock_device", "ClockDeviceDummyDBAdapter"}
+				{"clock_device", "ClockDeviceDummyDBAdapter"},
 			};
 
 			IDictionary<string, string> secondDBAdapters = new Dictionary<string, string>() {
@@ -25,7 +25,9 @@ namespace Configuration
 			Add("queue_capacity", 20);
 			Add("db_conf_list", new DBConfiguration [] {
 						new DBConfiguration ("test", "dummy_db", "dodo", "dodo", "DBConnection", "DBConnection", "DummyDBFactory", dummyDBAdapters),
-						new DBConfiguration ("test", "dummy_db", "dodo", "dodo", "DBConnection", "DBConnection", "SecondDBFactory", secondDBAdapters)
+						new DBConfiguration ("test", "dummy_db", "dodo", "dodo", "DBConnection", "DBConnection", "SecondDBFactory", secondDBAdapters),
+                        new DBConfiguration ("Data Source=.\\SQLEXPRESS;AttachDbFilename=...\\LocalDB.mdf;Integrated Security=True;User Instance=True",
+                            "dummy_db", "dodo", "dodo", "DBConnection", "DBConnection", "localDBFactory", secondDBAdapters)
 					});
 
 			Add("dev_conf_list", new DeviceConfiguration[] {
