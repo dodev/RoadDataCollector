@@ -49,7 +49,6 @@ namespace GUI
         void HandleStarted (object sender, EventArgs e)
         {
 			startStopButton.Text = "Stop";
-			progressBar.Value = 1;
 			photoCheckBox.Enabled = false;
 			gpsCheckBox.Enabled = false;
 			georadarCheckBox.Enabled = false;
@@ -67,7 +66,6 @@ namespace GUI
 		void HandleStopped (object sender, EventArgs e)
 		{
 			startStopButton.Text = "Start";
-			progressBar.Value = 0;
 			photoCheckBox.Enabled = true;
 			gpsCheckBox.Enabled = true;
 			georadarCheckBox.Enabled = true;
@@ -173,20 +171,6 @@ namespace GUI
 			logTextBox.SelectionStart = logTextBox.Text.Length;
 			logTextBox.ScrollToCaret ();
         }
-        //progressBarValue
-        /// <summary>
-        /// Изменяет progressBar
-        /// </summary>
-        /// <param name="value">новое значение, не может быть больше 100; если 0 - возвращает значение</param>
-        public int ProgressBarValue(int value)
-        {
-            if (value == 0)
-                return progressBar.Value;
-            if (value > 100)
-                value = 100;
-            progressBar.Value = value;
-            return progressBar.Value;
-        }
         //get data base status
         /// <summary>
         /// Сообщает подключена ли БД
@@ -269,39 +253,17 @@ namespace GUI
         /// <summary>
         /// Возвращает тип единиц измерения периода, true - метры, false - мс
         /// </summary>
-        /// <param name="deviceType">1 - фотокамера, 2 - GPS, 3 - георадар</param>
-        public bool DevicePeriod(int deviceType)
+        public bool DevicePeriod()
         {
-            switch (deviceType)
-            {
-                case 1:
-                    return photoPeriodMetrRadioButton.Checked;
-                case 2:
-                    return gpsPeriodMetrRadioButton.Checked;
-                case 3:
-                    return georadarPeriodMetrRadioButton.Checked;
-                default:
-                    return false;
-            }
+            return periodMetrRadioButton.Checked;
         }
         //get period value
         /// <summary>
         /// Возвращает значение периода; при ошибке возвращает -1
         /// </summary>
-        /// <param name="deviceType">1 - фотокамера, 2 - GPS, 3 - георадар</param>
-        public int DevicePeriodValue(int deviceType)
+        public int DevicePeriodValue()
         {
-            switch (deviceType)
-            {
-                case 1:
-                    return int.Parse(photoPeriodTextBox.Text);
-                case 2:
-                    return int.Parse(gpsPeriodTextBox.Text);
-                case 3:
-                    return int.Parse(georadarPeriodTextBox.Text);
-                default:
-                    return -1;
-            }
+            return int.Parse(periodTextBox.Text);
         }
         //set device period status
         /// <summary>
@@ -333,20 +295,9 @@ namespace GUI
         /// </summary>
         /// <param name="deviceType">1 - фотокамера, 2 - GPS, 3 - георадар</param>
         /// <param name="value">значение должно быть больше 0</param>
-        public void DevicePeriodValue(int deviceType, int value)
+        public void DevicePeriodValue(int value)
         {
-            switch (deviceType)
-            {
-                case 1:
-                    photoPeriodTextBox.Text = value.ToString();
-                    break;
-                case 2:
-                    gpsPeriodTextBox.Text = value.ToString();
-                    break;
-                case 3:
-                    georadarPeriodTextBox.Text = value.ToString();
-                    break;
-            }
+            periodTextBox.Text = value.ToString();
         }
         #endregion
     }

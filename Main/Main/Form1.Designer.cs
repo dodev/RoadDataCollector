@@ -30,7 +30,6 @@
         {
             this.tabControl = new System.Windows.Forms.TabControl();
             this.mainTabPage = new System.Windows.Forms.TabPage();
-            this.progressBar = new System.Windows.Forms.ProgressBar();
             this.startStopButton = new System.Windows.Forms.Button();
             this.logTextBox = new System.Windows.Forms.TextBox();
             this.georadarCheckBox = new System.Windows.Forms.CheckBox();
@@ -40,14 +39,6 @@
             this.georadarLabel = new System.Windows.Forms.Label();
             this.gpsLabel = new System.Windows.Forms.Label();
             this.photoLabel = new System.Windows.Forms.Label();
-            this.georadarPeriodGroupBox = new System.Windows.Forms.GroupBox();
-            this.georadarPeriodTextBox = new System.Windows.Forms.TextBox();
-            this.georadarPeriodMSRadioButton = new System.Windows.Forms.RadioButton();
-            this.georadarPeriodMetrRadioButton = new System.Windows.Forms.RadioButton();
-            this.gpsPeriodGroupBox = new System.Windows.Forms.GroupBox();
-            this.gpsPeriodTextBox = new System.Windows.Forms.TextBox();
-            this.gpsPeriodMSRadioButton = new System.Windows.Forms.RadioButton();
-            this.gpsPeriodMetrRadioButton = new System.Windows.Forms.RadioButton();
             this.georadarConnectGroupBox = new System.Windows.Forms.GroupBox();
             this.georadarConnectDeviceButton = new System.Windows.Forms.Button();
             this.georadarConnectDeviceRadioButton = new System.Windows.Forms.RadioButton();
@@ -56,10 +47,10 @@
             this.gpsConnectDeviceButton = new System.Windows.Forms.Button();
             this.gpsConnectDeviceRadioButton = new System.Windows.Forms.RadioButton();
             this.gpsConnectEmulatorRadioButton = new System.Windows.Forms.RadioButton();
-            this.photoPeriodGroupBox = new System.Windows.Forms.GroupBox();
-            this.photoPeriodTextBox = new System.Windows.Forms.TextBox();
-            this.photoPeriodMSRadioButton = new System.Windows.Forms.RadioButton();
-            this.photoPeriodMetrRadioButton = new System.Windows.Forms.RadioButton();
+            this.periodGroupBox = new System.Windows.Forms.GroupBox();
+            this.periodTextBox = new System.Windows.Forms.TextBox();
+            this.periodMSRadioButton = new System.Windows.Forms.RadioButton();
+            this.periodMetrRadioButton = new System.Windows.Forms.RadioButton();
             this.photoConnectGroupBox = new System.Windows.Forms.GroupBox();
             this.photoConnectDeviceButton = new System.Windows.Forms.Button();
             this.photoConnectDeviceRadioButton = new System.Windows.Forms.RadioButton();
@@ -71,11 +62,9 @@
             this.tabControl.SuspendLayout();
             this.mainTabPage.SuspendLayout();
             this.deviceTabPage.SuspendLayout();
-            this.georadarPeriodGroupBox.SuspendLayout();
-            this.gpsPeriodGroupBox.SuspendLayout();
             this.georadarConnectGroupBox.SuspendLayout();
             this.gpsConnectGroupBox.SuspendLayout();
-            this.photoPeriodGroupBox.SuspendLayout();
+            this.periodGroupBox.SuspendLayout();
             this.photoConnectGroupBox.SuspendLayout();
             this.dbTabPage.SuspendLayout();
             this.SuspendLayout();
@@ -93,7 +82,6 @@
             // 
             // mainTabPage
             // 
-            this.mainTabPage.Controls.Add(this.progressBar);
             this.mainTabPage.Controls.Add(this.startStopButton);
             this.mainTabPage.Controls.Add(this.logTextBox);
             this.mainTabPage.Controls.Add(this.georadarCheckBox);
@@ -106,13 +94,6 @@
             this.mainTabPage.TabIndex = 0;
             this.mainTabPage.Text = "Запуск";
             this.mainTabPage.UseVisualStyleBackColor = true;
-            // 
-            // progressBar
-            // 
-            this.progressBar.Location = new System.Drawing.Point(104, 84);
-            this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(294, 16);
-            this.progressBar.TabIndex = 5;
             // 
             // startStopButton
             // 
@@ -134,7 +115,7 @@
             this.logTextBox.Name = "logTextBox";
             this.logTextBox.ReadOnly = true;
             this.logTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.logTextBox.Size = new System.Drawing.Size(294, 74);
+            this.logTextBox.Size = new System.Drawing.Size(294, 254);
             this.logTextBox.TabIndex = 3;
             // 
             // georadarCheckBox
@@ -178,11 +159,9 @@
             this.deviceTabPage.Controls.Add(this.georadarLabel);
             this.deviceTabPage.Controls.Add(this.gpsLabel);
             this.deviceTabPage.Controls.Add(this.photoLabel);
-            this.deviceTabPage.Controls.Add(this.georadarPeriodGroupBox);
-            this.deviceTabPage.Controls.Add(this.gpsPeriodGroupBox);
             this.deviceTabPage.Controls.Add(this.georadarConnectGroupBox);
             this.deviceTabPage.Controls.Add(this.gpsConnectGroupBox);
-            this.deviceTabPage.Controls.Add(this.photoPeriodGroupBox);
+            this.deviceTabPage.Controls.Add(this.periodGroupBox);
             this.deviceTabPage.Controls.Add(this.photoConnectGroupBox);
             this.deviceTabPage.Location = new System.Drawing.Point(4, 22);
             this.deviceTabPage.Name = "deviceTabPage";
@@ -218,92 +197,6 @@
             this.photoLabel.Size = new System.Drawing.Size(73, 13);
             this.photoLabel.TabIndex = 9;
             this.photoLabel.Text = "Фотокамера";
-            // 
-            // georadarPeriodGroupBox
-            // 
-            this.georadarPeriodGroupBox.Controls.Add(this.georadarPeriodTextBox);
-            this.georadarPeriodGroupBox.Controls.Add(this.georadarPeriodMSRadioButton);
-            this.georadarPeriodGroupBox.Controls.Add(this.georadarPeriodMetrRadioButton);
-            this.georadarPeriodGroupBox.Location = new System.Drawing.Point(181, 190);
-            this.georadarPeriodGroupBox.Name = "georadarPeriodGroupBox";
-            this.georadarPeriodGroupBox.Size = new System.Drawing.Size(154, 65);
-            this.georadarPeriodGroupBox.TabIndex = 8;
-            this.georadarPeriodGroupBox.TabStop = false;
-            this.georadarPeriodGroupBox.Text = "Период";
-            // 
-            // georadarPeriodTextBox
-            // 
-            this.georadarPeriodTextBox.Location = new System.Drawing.Point(84, 39);
-            this.georadarPeriodTextBox.Name = "georadarPeriodTextBox";
-            this.georadarPeriodTextBox.Size = new System.Drawing.Size(64, 20);
-            this.georadarPeriodTextBox.TabIndex = 2;
-            this.georadarPeriodTextBox.Text = "100";
-            this.georadarPeriodTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.NumeralsOnly);
-            // 
-            // georadarPeriodMSRadioButton
-            // 
-            this.georadarPeriodMSRadioButton.AutoSize = true;
-            this.georadarPeriodMSRadioButton.Checked = true;
-            this.georadarPeriodMSRadioButton.Location = new System.Drawing.Point(6, 42);
-            this.georadarPeriodMSRadioButton.Name = "georadarPeriodMSRadioButton";
-            this.georadarPeriodMSRadioButton.Size = new System.Drawing.Size(39, 17);
-            this.georadarPeriodMSRadioButton.TabIndex = 1;
-            this.georadarPeriodMSRadioButton.TabStop = true;
-            this.georadarPeriodMSRadioButton.Text = "мс";
-            this.georadarPeriodMSRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // georadarPeriodMetrRadioButton
-            // 
-            this.georadarPeriodMetrRadioButton.AutoSize = true;
-            this.georadarPeriodMetrRadioButton.Location = new System.Drawing.Point(6, 19);
-            this.georadarPeriodMetrRadioButton.Name = "georadarPeriodMetrRadioButton";
-            this.georadarPeriodMetrRadioButton.Size = new System.Drawing.Size(58, 17);
-            this.georadarPeriodMetrRadioButton.TabIndex = 0;
-            this.georadarPeriodMetrRadioButton.Text = "метры";
-            this.georadarPeriodMetrRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // gpsPeriodGroupBox
-            // 
-            this.gpsPeriodGroupBox.Controls.Add(this.gpsPeriodTextBox);
-            this.gpsPeriodGroupBox.Controls.Add(this.gpsPeriodMSRadioButton);
-            this.gpsPeriodGroupBox.Controls.Add(this.gpsPeriodMetrRadioButton);
-            this.gpsPeriodGroupBox.Location = new System.Drawing.Point(181, 104);
-            this.gpsPeriodGroupBox.Name = "gpsPeriodGroupBox";
-            this.gpsPeriodGroupBox.Size = new System.Drawing.Size(154, 65);
-            this.gpsPeriodGroupBox.TabIndex = 7;
-            this.gpsPeriodGroupBox.TabStop = false;
-            this.gpsPeriodGroupBox.Text = "Период";
-            // 
-            // gpsPeriodTextBox
-            // 
-            this.gpsPeriodTextBox.Location = new System.Drawing.Point(84, 39);
-            this.gpsPeriodTextBox.Name = "gpsPeriodTextBox";
-            this.gpsPeriodTextBox.Size = new System.Drawing.Size(64, 20);
-            this.gpsPeriodTextBox.TabIndex = 2;
-            this.gpsPeriodTextBox.Text = "10";
-            this.gpsPeriodTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.NumeralsOnly);
-            // 
-            // gpsPeriodMSRadioButton
-            // 
-            this.gpsPeriodMSRadioButton.AutoSize = true;
-            this.gpsPeriodMSRadioButton.Location = new System.Drawing.Point(6, 42);
-            this.gpsPeriodMSRadioButton.Name = "gpsPeriodMSRadioButton";
-            this.gpsPeriodMSRadioButton.Size = new System.Drawing.Size(39, 17);
-            this.gpsPeriodMSRadioButton.TabIndex = 1;
-            this.gpsPeriodMSRadioButton.Text = "мс";
-            this.gpsPeriodMSRadioButton.UseVisualStyleBackColor = true;
-            // 
-            // gpsPeriodMetrRadioButton
-            // 
-            this.gpsPeriodMetrRadioButton.AutoSize = true;
-            this.gpsPeriodMetrRadioButton.Checked = true;
-            this.gpsPeriodMetrRadioButton.Location = new System.Drawing.Point(6, 19);
-            this.gpsPeriodMetrRadioButton.Name = "gpsPeriodMetrRadioButton";
-            this.gpsPeriodMetrRadioButton.Size = new System.Drawing.Size(58, 17);
-            this.gpsPeriodMetrRadioButton.TabIndex = 0;
-            this.gpsPeriodMetrRadioButton.TabStop = true;
-            this.gpsPeriodMetrRadioButton.Text = "метры";
-            this.gpsPeriodMetrRadioButton.UseVisualStyleBackColor = true;
             // 
             // georadarConnectGroupBox
             // 
@@ -391,48 +284,48 @@
             this.gpsConnectEmulatorRadioButton.Text = "заглушка";
             this.gpsConnectEmulatorRadioButton.UseVisualStyleBackColor = true;
             // 
-            // photoPeriodGroupBox
+            // periodGroupBox
             // 
-            this.photoPeriodGroupBox.Controls.Add(this.photoPeriodTextBox);
-            this.photoPeriodGroupBox.Controls.Add(this.photoPeriodMSRadioButton);
-            this.photoPeriodGroupBox.Controls.Add(this.photoPeriodMetrRadioButton);
-            this.photoPeriodGroupBox.Location = new System.Drawing.Point(181, 20);
-            this.photoPeriodGroupBox.Name = "photoPeriodGroupBox";
-            this.photoPeriodGroupBox.Size = new System.Drawing.Size(154, 65);
-            this.photoPeriodGroupBox.TabIndex = 6;
-            this.photoPeriodGroupBox.TabStop = false;
-            this.photoPeriodGroupBox.Text = "Период";
+            this.periodGroupBox.Controls.Add(this.periodTextBox);
+            this.periodGroupBox.Controls.Add(this.periodMSRadioButton);
+            this.periodGroupBox.Controls.Add(this.periodMetrRadioButton);
+            this.periodGroupBox.Location = new System.Drawing.Point(181, 20);
+            this.periodGroupBox.Name = "periodGroupBox";
+            this.periodGroupBox.Size = new System.Drawing.Size(154, 65);
+            this.periodGroupBox.TabIndex = 6;
+            this.periodGroupBox.TabStop = false;
+            this.periodGroupBox.Text = "Период";
             // 
-            // photoPeriodTextBox
+            // periodTextBox
             // 
-            this.photoPeriodTextBox.Location = new System.Drawing.Point(84, 39);
-            this.photoPeriodTextBox.Name = "photoPeriodTextBox";
-            this.photoPeriodTextBox.Size = new System.Drawing.Size(64, 20);
-            this.photoPeriodTextBox.TabIndex = 2;
-            this.photoPeriodTextBox.Text = "60000";
-            this.photoPeriodTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.NumeralsOnly);
+            this.periodTextBox.Location = new System.Drawing.Point(84, 39);
+            this.periodTextBox.Name = "periodTextBox";
+            this.periodTextBox.Size = new System.Drawing.Size(64, 20);
+            this.periodTextBox.TabIndex = 2;
+            this.periodTextBox.Text = "60000";
+            this.periodTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.NumeralsOnly);
             // 
-            // photoPeriodMSRadioButton
+            // periodMSRadioButton
             // 
-            this.photoPeriodMSRadioButton.AutoSize = true;
-            this.photoPeriodMSRadioButton.Checked = true;
-            this.photoPeriodMSRadioButton.Location = new System.Drawing.Point(6, 42);
-            this.photoPeriodMSRadioButton.Name = "photoPeriodMSRadioButton";
-            this.photoPeriodMSRadioButton.Size = new System.Drawing.Size(39, 17);
-            this.photoPeriodMSRadioButton.TabIndex = 1;
-            this.photoPeriodMSRadioButton.TabStop = true;
-            this.photoPeriodMSRadioButton.Text = "мс";
-            this.photoPeriodMSRadioButton.UseVisualStyleBackColor = true;
+            this.periodMSRadioButton.AutoSize = true;
+            this.periodMSRadioButton.Checked = true;
+            this.periodMSRadioButton.Location = new System.Drawing.Point(6, 42);
+            this.periodMSRadioButton.Name = "periodMSRadioButton";
+            this.periodMSRadioButton.Size = new System.Drawing.Size(39, 17);
+            this.periodMSRadioButton.TabIndex = 1;
+            this.periodMSRadioButton.TabStop = true;
+            this.periodMSRadioButton.Text = "мс";
+            this.periodMSRadioButton.UseVisualStyleBackColor = true;
             // 
-            // photoPeriodMetrRadioButton
+            // periodMetrRadioButton
             // 
-            this.photoPeriodMetrRadioButton.AutoSize = true;
-            this.photoPeriodMetrRadioButton.Location = new System.Drawing.Point(6, 19);
-            this.photoPeriodMetrRadioButton.Name = "photoPeriodMetrRadioButton";
-            this.photoPeriodMetrRadioButton.Size = new System.Drawing.Size(58, 17);
-            this.photoPeriodMetrRadioButton.TabIndex = 0;
-            this.photoPeriodMetrRadioButton.Text = "метры";
-            this.photoPeriodMetrRadioButton.UseVisualStyleBackColor = true;
+            this.periodMetrRadioButton.AutoSize = true;
+            this.periodMetrRadioButton.Location = new System.Drawing.Point(6, 19);
+            this.periodMetrRadioButton.Name = "periodMetrRadioButton";
+            this.periodMetrRadioButton.Size = new System.Drawing.Size(58, 17);
+            this.periodMetrRadioButton.TabIndex = 0;
+            this.periodMetrRadioButton.Text = "метры";
+            this.periodMetrRadioButton.UseVisualStyleBackColor = true;
             // 
             // photoConnectGroupBox
             // 
@@ -538,16 +431,12 @@
             this.mainTabPage.PerformLayout();
             this.deviceTabPage.ResumeLayout(false);
             this.deviceTabPage.PerformLayout();
-            this.georadarPeriodGroupBox.ResumeLayout(false);
-            this.georadarPeriodGroupBox.PerformLayout();
-            this.gpsPeriodGroupBox.ResumeLayout(false);
-            this.gpsPeriodGroupBox.PerformLayout();
             this.georadarConnectGroupBox.ResumeLayout(false);
             this.georadarConnectGroupBox.PerformLayout();
             this.gpsConnectGroupBox.ResumeLayout(false);
             this.gpsConnectGroupBox.PerformLayout();
-            this.photoPeriodGroupBox.ResumeLayout(false);
-            this.photoPeriodGroupBox.PerformLayout();
+            this.periodGroupBox.ResumeLayout(false);
+            this.periodGroupBox.PerformLayout();
             this.photoConnectGroupBox.ResumeLayout(false);
             this.photoConnectGroupBox.PerformLayout();
             this.dbTabPage.ResumeLayout(false);
@@ -561,10 +450,10 @@
         private System.Windows.Forms.TabControl tabControl;
         private System.Windows.Forms.TabPage mainTabPage;
         private System.Windows.Forms.TabPage deviceTabPage;
-        private System.Windows.Forms.GroupBox photoPeriodGroupBox;
-        private System.Windows.Forms.TextBox photoPeriodTextBox;
-        private System.Windows.Forms.RadioButton photoPeriodMSRadioButton;
-        private System.Windows.Forms.RadioButton photoPeriodMetrRadioButton;
+        private System.Windows.Forms.GroupBox periodGroupBox;
+        private System.Windows.Forms.TextBox periodTextBox;
+        private System.Windows.Forms.RadioButton periodMSRadioButton;
+        private System.Windows.Forms.RadioButton periodMetrRadioButton;
         private System.Windows.Forms.GroupBox photoConnectGroupBox;
         private System.Windows.Forms.Button photoConnectDeviceButton;
         private System.Windows.Forms.RadioButton photoConnectDeviceRadioButton;
@@ -581,7 +470,6 @@
         private System.Windows.Forms.Button gpsConnectDeviceButton;
         private System.Windows.Forms.RadioButton gpsConnectDeviceRadioButton;
         private System.Windows.Forms.RadioButton gpsConnectEmulatorRadioButton;
-        private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.Button startStopButton;
         private System.Windows.Forms.TextBox logTextBox;
         private System.Windows.Forms.CheckBox georadarCheckBox;
@@ -590,14 +478,6 @@
         private System.Windows.Forms.Label georadarLabel;
         private System.Windows.Forms.Label gpsLabel;
         private System.Windows.Forms.Label photoLabel;
-        private System.Windows.Forms.GroupBox georadarPeriodGroupBox;
-        private System.Windows.Forms.TextBox georadarPeriodTextBox;
-        private System.Windows.Forms.RadioButton georadarPeriodMSRadioButton;
-        private System.Windows.Forms.RadioButton georadarPeriodMetrRadioButton;
-        private System.Windows.Forms.GroupBox gpsPeriodGroupBox;
-        private System.Windows.Forms.TextBox gpsPeriodTextBox;
-        private System.Windows.Forms.RadioButton gpsPeriodMSRadioButton;
-        private System.Windows.Forms.RadioButton gpsPeriodMetrRadioButton;
 
     }
 }
