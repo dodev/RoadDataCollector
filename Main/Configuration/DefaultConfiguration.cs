@@ -20,14 +20,18 @@ namespace Configuration
 				{"clock_device", "ClockDeviceSecondDBAdapter"}
 			};
 
+           // IDictionary<string, string> localDBAdapters = new Dictionary<string, string>() {
+			//	{"dummy_device", "DummyDeviceLocalDBAdapter"}
+			//};
+
 			Add("timer_type", "time");
 			Add("timer_time_interval_ms", 1000);
 			Add("queue_capacity", 20);
 			Add("db_conf_list", new DBConfiguration [] {
 						new DBConfiguration ("test", "dummy_db", "dodo", "dodo", "DBConnection", "DBConnection", "DummyDBFactory", dummyDBAdapters),
-						new DBConfiguration ("test", "dummy_db", "dodo", "dodo", "DBConnection", "DBConnection", "SecondDBFactory", secondDBAdapters),
-                        new DBConfiguration ("Data Source=.\\SQLEXPRESS;AttachDbFilename=...\\LocalDB.mdf;Integrated Security=True;User Instance=True",
-                            "dummy_db", "dodo", "dodo", "DBConnection", "DBConnection", "localDBFactory", secondDBAdapters)
+						new DBConfiguration ("test", "dummy_db", "dodo", "dodo", "DBConnection", "DBConnection", "SecondDBFactory", secondDBAdapters)//,
+                        //new DBConfiguration ("Server=.\\SQLExpress;AttachDbFilename=|DataDirectory|\\localDB\\LocalDB.mdf;Database=RDC_LDBC;Trusted_Connection=Yes;",
+                        //    null, null, null, "DBConnection", "DBConnection", "localDBFactory", localDBAdapters)
 					});
 
 			Add("dev_conf_list", new DeviceConfiguration[] {

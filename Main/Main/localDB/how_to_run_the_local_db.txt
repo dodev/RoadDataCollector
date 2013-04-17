@@ -1,0 +1,23 @@
+How to run the DB layer for the local DB 
+****************************************
+
+1) make sure msq sql express server 2008 R2 is installed
+if not: get it from here
+www.microsoft.com/en-us/download/details.aspx?id=23650
+install that file and configure the server with the default settings
+
+2) make sure the server is running by openning the SQL Server Configuration Manager
+There is a service called SQL Server (SQLEXPRESS). Make sure IT IS running.
+
+3) Add permissions to the RoadDataCollector folder.
+Add permissions to read/write/execute in RoadDataCollector to the user NETWORK SERVICE
+
+4) Make sure the config is ok:
+- in config.xml the DBConnection element for the local DB must be uncomented
+- the connection string must be as follows:
+Server=.\\SQLExpress;AttachDbFilename=|DataDirectory|\\localDB\\LocalDB.mdf;Database=RDC_LDBC;Trusted_Connection=Yes;
+
+5) In visual studio check if the files in the localDB folder in GUI are to be copied in the build directory
+They must be :)
+
+6) Run
