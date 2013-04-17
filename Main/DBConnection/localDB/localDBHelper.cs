@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
-using System.Drawing;
 
-namespace OOP
+namespace DBConnection
 {
-    /// <summary>
-    /// Класс для работы с данными (перевод в строку для записи в БД, перевод строки в нужный формат)
-    /// </summary>
-    static public class Helper
+    static public class localDBHelper
     {
         /// <summary>
         /// Перевод численного массива в строку вида: "N0; N1; "
@@ -62,19 +57,9 @@ namespace OOP
         /// <param name="X"></param>
         /// <param name="Y"></param>
         /// <returns></returns>
-        static public string PointToString(int X, int Y)
+        static public string PointToString(int X, int Y, int Z)
         {
-            return String.Format("{0}; {1}", X, Y);
-        }
-
-        /// <summary>
-        /// Перевод переменной типа Point в строку вида: "Х; У"
-        /// </summary>
-        /// <param name="point"></param>
-        /// <returns></returns>
-        static public string PointToString(Point point)
-        {
-            return String.Format("{0}; {1}", point.X, point.Y);
+            return String.Format("{0}; {1}; {2}", X, Y, Z);
         }
 
         /// <summary>
@@ -82,11 +67,11 @@ namespace OOP
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
-        static public Point StringToPoint(string str)
+        static public int[] StringToPoint(string str)
         {
             string[] values = str.Split(";".ToCharArray());
 
-            return new Point(int.Parse(values[0]), int.Parse(values[1]));
+            return new int[] { int.Parse(values[0]), int.Parse(values[1]), int.Parse(values[2]) };
         }
     }
 }
