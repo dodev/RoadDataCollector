@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Configuration>
+  <timer_type Type="System.String">
+    <string>time</string>
+  </timer_type>
+  <timer_time_interval_ms Type="System.Int32">
+    <int>1000</int>
+  </timer_time_interval_ms>
+  <queue_capacity Type="System.Int32">
+    <int>20</int>
+  </queue_capacity>
+  <db_conf_list Type="Configuration.DBConfiguration[]">
+    <ArrayOfDBConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <DBConfiguration>
+        <Address>test</Address>
+        <Name>dummy_db</Name>
+        <User>dodo</User>
+        <Password>dodo</Password>
+        <Assembly>DBConnection</Assembly>
+        <Namespace>DBConnection</Namespace>
+        <FactoryType>DummyDBFactory</FactoryType>
+        <SerializedAdapters>
+          <string>dummy_device</string>
+          <string>DummyDeviceDummyDBAdapter</string>
+          <string>clock_device</string>
+          <string>ClockDeviceDummyDBAdapter</string>
+        </SerializedAdapters>
+      </DBConfiguration>
+      <DBConfiguration>
+        <Address>test</Address>
+        <Name>dummy_db</Name>
+        <User>dodo</User>
+        <Password>dodo</Password>
+        <Assembly>DBConnection</Assembly>
+        <Namespace>DBConnection</Namespace>
+        <FactoryType>SecondDBFactory</FactoryType>
+        <SerializedAdapters>
+          <string>dummy_device</string>
+          <string>DummyDeviceSecondDBAdapter</string>
+          <string>clock_device</string>
+          <string>ClockDeviceSecondDBAdapter</string>
+        </SerializedAdapters>
+      </DBConfiguration>
+      <!--<DBConfiguration>
+        <Address>Server=.\SQLExpress;AttachDbFilename=|DataDirectory|\localDB\LocalDB.mdf;Database=RDC_LDBC;Trusted_Connection=Yes;</Address>
+        <Assembly>DBConnection</Assembly>
+        <Namespace>DBConnection</Namespace>
+        <FactoryType>localDBFactory</FactoryType>
+        <SerializedAdapters>
+          <string>dummy_device</string>
+          <string>DummyDeviceLocalDBAdapter</string>
+        </SerializedAdapters>
+      </DBConfiguration>-->
+    </ArrayOfDBConfiguration>
+  </db_conf_list>
+  <dev_conf_list Type="Configuration.DeviceConfiguration[]">
+    <ArrayOfDeviceConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <DeviceConfiguration>
+        <ID>dummy_device</ID>
+        <DisplayName>Пробное устройство</DisplayName>
+        <Assembly>Devices</Assembly>
+        <Namespace>Devices</Namespace>
+        <DeviceType>DummyDevice</DeviceType>
+      </DeviceConfiguration>
+      <DeviceConfiguration>
+        <ID>clock_device</ID>
+        <DisplayName>Часы</DisplayName>
+        <Assembly>Devices</Assembly>
+        <Namespace>Devices</Namespace>
+        <DeviceType>ClockDevice</DeviceType>
+      </DeviceConfiguration>
+    </ArrayOfDeviceConfiguration>
+  </dev_conf_list>
+</Configuration>
