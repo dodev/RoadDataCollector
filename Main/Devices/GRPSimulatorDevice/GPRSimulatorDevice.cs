@@ -26,6 +26,14 @@ namespace Devices
 		{
 			// Вот здесь можно кодит :)
 			throw new NotImplementedException();
+			int [] index = new int[512];
+			Random randoms = new Random ();
+
+			for (int i = 0; i < 511; i++) {
+				index [i] = Random.Next (-127, 128);
+			}
+
+			return (object)index;
 		}
 
 		public string ID {
