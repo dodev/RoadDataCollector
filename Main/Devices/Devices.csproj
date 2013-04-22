@@ -31,6 +31,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DummyDevice\DummyDeviceLocalDBAdapter.cs" />
+    <Compile Include="GPSDeviceSimulator\GPSDeviceSimulator.cs" />
+    <Compile Include="GPSDeviceSimulator\GPSDeviceSimulatorData.cs" />
+    <Compile Include="GPSDeviceSimulator\GPSDeviceSimulatorLocalDBAdapter.cs" />
+    <Compile Include="GPSDeviceSimulator\GPSDeviceSimulatorRemoteDBAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IDevice.cs" />
     <Compile Include="DummyDevice\DummyDevice.cs" />
@@ -43,6 +47,7 @@
     <Compile Include="ClockDevice\ClockDeviceData.cs" />
     <Compile Include="ClockDevice\ClockDeviceDummyDBAdapter.cs" />
     <Compile Include="ClockDevice\ClockDeviceSecondDBAdapter.cs" />
+    <Compile Include="GPSDeviceSimulator\GPSDeviceSimulatorDummyDBAdapter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

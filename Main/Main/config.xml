@@ -24,6 +24,8 @@
           <string>DummyDeviceDummyDBAdapter</string>
           <string>clock_device</string>
           <string>ClockDeviceDummyDBAdapter</string>
+          <string>GPS_Device_Simulator</string>
+          <string>GPSDeviceSimulatorDummyDBAdapter</string>
         </SerializedAdapters>
       </DBConfiguration>
       <DBConfiguration>
@@ -37,6 +39,8 @@
         <SerializedAdapters>
           <string>dummy_device</string>
           <string>DummyDeviceSecondDBAdapter</string>
+          <string>GPS_Device_Simulator</string>
+          <string>GPSDeviceSimulatorRemoteDBAdapter</string>
           <string>clock_device</string>
           <string>ClockDeviceSecondDBAdapter</string>
         </SerializedAdapters>
@@ -49,6 +53,8 @@
         <SerializedAdapters>
           <string>dummy_device</string>
           <string>DummyDeviceLocalDBAdapter</string>
+          <string>GPS_Device_Simulator</string>
+          <string>GPSDeviceSimulatorLocalDBAdapter</string>
         </SerializedAdapters>
       </DBConfiguration>-->
     </ArrayOfDBConfiguration>
@@ -61,6 +67,13 @@
         <Assembly>Devices</Assembly>
         <Namespace>Devices</Namespace>
         <DeviceType>DummyDevice</DeviceType>
+      </DeviceConfiguration>
+      <DeviceConfiguration>
+        <ID>GPS_Device_Simulator</ID>
+        <DisplayName>Симулятор GPS устройства</DisplayName>
+        <Assembly>Devices</Assembly>
+        <Namespace>Devices</Namespace>
+        <DeviceType>GPSDeviceSimulator</DeviceType>
       </DeviceConfiguration>
       <DeviceConfiguration>
         <ID>clock_device</ID>
