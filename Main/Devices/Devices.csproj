@@ -47,6 +47,7 @@
     <Compile Include="ClockDevice\ClockDeviceData.cs" />
     <Compile Include="ClockDevice\ClockDeviceDummyDBAdapter.cs" />
     <Compile Include="ClockDevice\ClockDeviceSecondDBAdapter.cs" />
+    <Compile Include="GPSDeviceSimulator\GPSDeviceSimulatorDummyDBAdapter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

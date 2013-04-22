@@ -2,6 +2,7 @@ using System;
 
 namespace Devices
 {
+	/*
 	public class GPRSimulatorDevice : IDevice
 	{
 		string name;
@@ -60,5 +61,6 @@ namespace Devices
 
 		#endregion
 	}
+	*/
 }
 

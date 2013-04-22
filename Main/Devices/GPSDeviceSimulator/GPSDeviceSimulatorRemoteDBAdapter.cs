@@ -15,6 +15,7 @@ namespace Devices
             if (Data == null)
                 throw new Exception("Data passed was not of the required type");
 
+			// TODO: create query for remote db
             var query = new SecondDBQuery(new string[] {string.Concat("N", ((Data.GetPositionLat()).ToString())), string.Concat("E", ((Data.GetPositionLong()).ToString())) });
 
             return query;

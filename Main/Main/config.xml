@@ -24,6 +24,8 @@
           <string>DummyDeviceDummyDBAdapter</string>
           <string>clock_device</string>
           <string>ClockDeviceDummyDBAdapter</string>
+          <string>GPS_Device_Simulator</string>
+          <string>GPSDeviceSimulatorDummyDBAdapter</string>
         </SerializedAdapters>
       </DBConfiguration>
       <DBConfiguration>
