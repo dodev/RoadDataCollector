@@ -28,6 +28,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="AForge">
+      <HintPath>..\Libs\AForge.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Video.DirectShow">
+      <HintPath>..\Libs\AForge.Video.DirectShow.dll</HintPath>
+    </Reference>
+    <Reference Include="AForge.Video">
+      <HintPath>..\Libs\AForge.Video.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DummyDevice\DummyDeviceLocalDBAdapter.cs" />
@@ -47,6 +57,9 @@
     <Compile Include="ClockDevice\ClockDeviceDummyDBAdapter.cs" />
     <Compile Include="ClockDevice\ClockDeviceSecondDBAdapter.cs" />
     <Compile Include="GPSDeviceSimulator\GPSDeviceSimulatorDummyDBAdapter.cs" />
+    <Compile Include="PhotoDevice\PhotoDevice.cs" />
+    <Compile Include="PhotoDevice\PhotoDeviceDummyDBAdapter.cs" />
+    <Compile Include="PhotoDevice\PhotoDeviceSecondDBAdapter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -56,4 +69,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Folder Include="PhotoDevice\" />
+  </ItemGroup>
 </Project>
