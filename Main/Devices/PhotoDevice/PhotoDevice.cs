@@ -50,7 +50,6 @@ namespace Devices
         void FinalVideo_NewFrame(object sender, NewFrameEventArgs eventArgs)
         {
             gLatestFrame = (Bitmap)eventArgs.Frame.Clone();
-            throw new NotImplementedException();
         }
 
 

@@ -22,6 +22,7 @@ namespace Devices
 
 			string fileName = num.ToString () + ".bmp";
 			dummyData.Save (fileName);
+            num++;
 
 			var query = new DummyQuery ("dummy_images",
 				new string[] {"filename"},
