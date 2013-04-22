@@ -41,7 +41,6 @@
     <Compile Include="DummyDevice\DummyDeviceData.cs" />
     <Compile Include="DummyDevice\DummyDeviceDummyDBAdapter.cs" />
     <Compile Include="IStorageAdapter.cs" />
-    <Compile Include="GRPSimulatorDevice\GPRSimulatorDevice.cs" />
     <Compile Include="DummyDevice\DummyDeviceSecondDBAdapter.cs" />
     <Compile Include="ClockDevice\ClockDevice.cs" />
     <Compile Include="ClockDevice\ClockDeviceData.cs" />
