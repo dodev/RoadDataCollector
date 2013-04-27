@@ -5,34 +5,37 @@ namespace Devices
 	public class GPRSimulatorDevice : IDevice
 	{
 		string name;
-		// const int depth;
-		const int width = 256;
+		const int depth = 128;
+		/* const int width = 256;
 		const int height = 256;
-		double[] values;
-		// short[] previous;
+		*/
+		Random rnd = new Random();
+		short[] previous;
+		short[] current;
 
 		public GPRSimulatorDevice ()
 		{
-			values = new double[width * height];
+			/*
+			 * values = new double[width * height];
 
 			for (int i = 0; i < height; i++) {
 				for (int j = 0; j < height; j++) {
 					setSample(i, j, GetRandomNumber (-1, 1));
 				}
 			}
-			/*
+			*/
 			previous = new short[depth];
 
 
 			for (int i = 0; i < depth; i++) {
-				index [i] = Random(Random.Next (-128, 127));
+				previous [i] = (short)rnd.Next (-128, 127);
 			}
-			*/
+
 		}
 
 		#region IDevice implementation
 
-		public double sample (int x, int y)
+		/* public double sample (int x, int y)
 		{
 			return values [(x & (width - 1)) + (y & (height - 1)) * width];
 		}
@@ -89,6 +92,7 @@ namespace Devices
 			}
 			
 		}
+		*/
 
 		public void Init (string name, IStorageAdapter adapter)
 		{
@@ -101,18 +105,20 @@ namespace Devices
 			Init(name, null);
 		}
 
-		public double GetRandomNumber(double minimum, double maximum)
+		/* public double GetRandomNumber(double minimum, double maximum)
 		{ 
 			Random random = new Random();
 			return random.NextDouble() * (maximum - minimum) + minimum;
 		}
+		*/
 
 		public object GetData ()
 		{
 
 			// Вот здесь можно кодит :)
-			throw new NotImplementedException();
 
+
+			/* 
 			int samplesize = 10;
 			double scale = 1.0;
 			
@@ -123,21 +129,21 @@ namespace Devices
 				samplesize /= 2;
 				scale /= 2.0;
 			}
+			*/
 
 			
-				/* 
-			short [][] current = new short[depth];
+			 
+			current = new short[depth];
+
 
 			for (int i = 0; i < depth; i++) {
-			for (int j = 0; j < depth; j++) {
-				current [j][i] = previous [i] + Random.Next (-2, 2);
+				current [i] = (short)(previous[i] + rnd.Next (1, 2));
+				previous[i] = current[i];
 			}
-		}
-		*/
 
 
-
-			return (object)values;
+		
+			return (object)current;
 		}
 
 		public string ID {
